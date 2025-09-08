@@ -16,7 +16,7 @@ class UserService
         $this->userRepository=$userRepository;    
     }
     
-    public function getUser($email){
-        return $this->userRepository->getUser($email);
+    public function getUser($name){
+        return $this->userRepository->getUser($name);
     }
 }

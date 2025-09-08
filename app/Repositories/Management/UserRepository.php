@@ -6,9 +6,9 @@ use App\Models\User;
 
 class UserRepository
 {
-    public function getUser($email)
+    public function getUser($name)
     {
-        $user = User::where('email', $email)->first();
+        $user = User::where('name', $name)->first();
         return $user;
     }
 }
