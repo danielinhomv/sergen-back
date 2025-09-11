@@ -43,8 +43,8 @@ class InseminationReportRepository
 
                 foreach ($values as $value) {
                     if ($dataType === 'numeric') {
-                        // Verifica si el valor contiene un operador (>, >=)
-                        preg_match('/^(>=|>)(.*)/', $value, $matches);
+                        // Verifica si el valor contiene un operador (>, >=, !=, <)
+                        preg_match('/^(>=|>|!=|<)(.*)/', $value, $matches);
                         if (count($matches) > 0) {
                             $operator = $matches[1];
                             $cleanValue = (float)str_replace(',', '.', $matches[2]);
