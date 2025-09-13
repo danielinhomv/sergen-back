@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Report;
 
+use App\Models\Current_session;
 use App\Models\Insemination;
 
 class InseminationReportRepository
@@ -23,9 +24,22 @@ class InseminationReportRepository
         array $parameters,
         ?string $startDate = null,
         ?string $endDate = null,
-        $control_id
+        $property_id
     ): array {
-        // Inicia la consulta filtrando por el control_id a través de la relación Control_bovine
+        $currentSession = Current_session::where('property_id', $property_id)->first();
+        if($currentSession === null){
+            return [
+                'error' => 'No se encontro la propiedad.'
+            ];
+        }
+        if(!$currentSession->isActive()){
+            return [
+                'error' => 'La propiedad no esta activa.'
+            ];
+        }
+        
+        $control_id = $currentSession->control_id;
+
         $query = Insemination::whereHas('bovineControl', function ($query) use ($control_id) {
             $query->where('control_id', $control_id);
         });

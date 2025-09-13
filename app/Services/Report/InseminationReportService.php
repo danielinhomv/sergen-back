@@ -4,16 +4,13 @@ namespace App\Services\Report;
 
 use App\Repositories\Report\InseminationReportRepository;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
-use Firebase\JWT\JWT;
+
 
 class InseminationReportService
 {
-    protected InseminationReportRepository $inseminationRepository;
-
-    // Propiedades de la clase
-    private string $sessionId; // Puedes usar el ID del usuario o de la sesión
-    protected DialogFlowService $dialogFlowService;
+    private InseminationReportRepository $inseminationRepository;
+    private string $sessionId; 
+    private DialogFlowService $dialogFlowService;
 
     public function __construct(
         InseminationReportRepository $inseminationRepository,
@@ -23,12 +20,6 @@ class InseminationReportService
         $this->inseminationRepository = $inseminationRepository;
     }
 
-    /**
-     * Genera un reporte de inseminación a partir de una solicitud de webhook de Dialogflow.
-     *
-     * @param Request $request La solicitud HTTP completa.
-     * @return array Los datos del reporte o un array con un mensaje de error.
-     */
     public function generateReport(Request $request): array
     {
         // Carga las credenciales del archivo JSON
@@ -39,13 +30,14 @@ class InseminationReportService
 
         // Extrae los datos del Request HTTP
         $text = $request->input('text');
-        $controlId = $request->input('control_id');
+        $property_id = $request->input('property_id');
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
         $userId = $request->input('user_id');
 
+
         $this->sessionId = $userId ?? 'default_session';
-        if (is_null($controlId)) {
+        if (is_null($property_id)) {
             return [
                 'error' => 'El ID de control es requerido.'
             ];
@@ -59,7 +51,7 @@ class InseminationReportService
         $this->sessionId = "sesion-" . $userId;
 
         $parameters = $this->dialogFlowService->reportRequest($text, $this->sessionId);
-        
+
         if (isset($parameters['error'])) {
             return $parameters;
         }
@@ -68,9 +60,14 @@ class InseminationReportService
             $parameters,
             $startDate,
             $endDate,
-            $controlId
+            $property_id
         );
 
+        if (empty($reportData)) {
+            return [
+                'error' => 'No se encontraron datos para los criterios especificados.'
+            ];
+        }
         return $reportData;
     }
 }
