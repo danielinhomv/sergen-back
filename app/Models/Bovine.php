@@ -23,4 +23,10 @@ class Bovine extends Model
     {
         return $this->belongsTo(Control::class);
     }
+
+    public function bovineMother()
+    {
+        return $this->belongsTo(Bovine::class, 'mother_id');
+    }
+
 }
