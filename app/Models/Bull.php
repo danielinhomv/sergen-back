@@ -13,4 +13,9 @@ class Bull extends Model
     {
         return $this->hasMany(Bull::class);
     }
+
+    public function inseminations()
+    {
+        return $this->hasMany(Insemination::class);
+    }
 }

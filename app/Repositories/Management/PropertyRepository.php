@@ -10,12 +10,11 @@ class PropertyRepository
     public function getAllProperties($user_id)
     {
         $properties = Property::where('user_id', $user_id)->get();
-        return 
+        return
             [
                 'message' => 'Properties retrieved successfully',
                 'properties' => $this->toMap($properties)
             ];
-        
     }
 
     private function toMap($properties)
@@ -35,11 +34,17 @@ class PropertyRepository
     {
         try {
             $name = $request->input('name');
-            return Property::where('name', $name)->exists();
+            $user_id = $request->input('user_id');
+
+            $exists = Property::where('name', $name)
+                ->where('user_id', $user_id)
+                ->exists();
+
+            return ['exists' => $exists];
+            
         } catch (\Exception $e) {
             return ['error' => 'Failed to check name existence', 'details' => $e->getMessage()];
         }
-
     }
 
     public function createProperty($request)
@@ -47,12 +52,11 @@ class PropertyRepository
         try {
             $propertie = Property::create($request);
             $propertie->save();
-            return 
+            return
                 [
                     'message' => 'Property created successfully',
                     'property' => $this->toMapSingle($propertie)
                 ];
-            
         } catch (\Exception $e) {
             return ['error' => 'Failed to create property', 'details' => $e->getMessage()];
         }
@@ -76,16 +80,14 @@ class PropertyRepository
             if (!$property) {
                 return ['error' => 'Property not found'];
             }
-            return 
+            return
                 [
                     'message' => 'Property retrieved successfully',
                     'property' => $this->toMapSingle($property)
                 ];
-            
         } catch (\Exception $e) {
             return ['error' => 'Failed to retrieve property', 'details' => $e->getMessage()];
         }
-
     }
 
     public function updateProperty($request, $id)
@@ -96,7 +98,7 @@ class PropertyRepository
                 return ['error' => 'Property not found'];
             }
             $property->update($request);
-            return 
+            return
                 [
                     'message' => 'Property updated successfully',
                     'property' => $this->toMapSingle($property)
