@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('general_palpations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('bovino_id')->constrained('bovines')->onDelete('cascade');
             $table->enum('status', ['pregnant', 'empty', 'discard', 'abort']);
             $table->text('observation')->nullable();
             $table->date('date');
