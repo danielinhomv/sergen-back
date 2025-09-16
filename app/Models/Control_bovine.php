@@ -11,7 +11,7 @@ class Control_bovine extends Model
 
     public function confirmatory_ultrasound()
     {
-        return $this->hasOne(Confirmatory_ultrasound::class);
+        return $this->hasMany(Confirmatory_ultrasound::class);
     }
 
     public function general_palpation()
@@ -26,7 +26,7 @@ class Control_bovine extends Model
 
     public function insemination()
     {
-        return $this->hasOne(Insemination::class);
+        return $this->hasMany(Insemination::class);
     }
 
     public function pre_sincronization()
