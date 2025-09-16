@@ -1,25 +1,71 @@
 <?php
-namespace App\Repositories\Management;
 
-class ImplantRetrievalsService 
+namespace App\Services\Management;
+
+use App\Repositories\Management\ControlBovineRepository;
+use App\Repositories\Management\ImplantRetrievalsRepository;
+
+class ImplantRetrievalsService
 {
 
-    private ImplantRetrievalsRepository $implantRetrievalsRepository;   
+    private ControlBovineRepository $controlBovineRepository;
+    private ImplantRetrievalsRepository $implantRetrievalsRepository;
 
-    public function __construct(ImplantRetrievalsRepository $implantRetrievalsRepository)
+    public function __construct(ControlBovineRepository $controlBovineRepository,ImplantRetrievalsRepository $implantRetrievalsRepository)
     {
+        $this->controlBovineRepository = $controlBovineRepository;
         $this->implantRetrievalsRepository = $implantRetrievalsRepository;
     }
-
+    
     public function create($request)
     {
-        return $this->implantRetrievalsRepository->create($request);
+        try {
+
+            $implantRetrieval = $this->implantRetrievalsRepository->create($request);
+
+            if (!$implantRetrieval) {
+                return ['error' => 'Failed to create Implant Retrieval'];
+            }
+
+            return $this->toMapSingle($implantRetrieval);
+        } catch (\Exception $e) {
+            return ['error' => 'Exception occurred: ' . $e->getMessage()];
+        }
     }
 
     public function get($request)
     {
-        return $this->implantRetrievalsRepository->get($request);
+        try {
+            $bovineControl = $this->controlBovineRepository->find($request->input('bovine-controls_id'));
+            
+            if (!$bovineControl) {
+                return ['error' => 'Bovine Control not found'];
+            }
+
+            $implantRetrieval = $bovineControl->implant_retrieval;
+
+            if (!$implantRetrieval) {
+                return ['error' => 'Implant Retrieval not found'];
+            }
+
+            return $this->toMapSingle($implantRetrieval);
+        } catch (\Exception $e) {
+            return ['error' => 'Exception occurred: ' . $e->getMessage()];
+        }
     }
 
-    
+    private function  toMapSingle($implantRetrieval)
+    {
+        try {
+            return [
+                'id' => $implantRetrieval->id,
+                'status' => $implantRetrieval->status,
+                'work_team' => $implantRetrieval->work_team,
+                'used_product_summary' => $implantRetrieval->used_product_summary,
+                'date' => $implantRetrieval->date
+            ];
+        } catch (\Exception $e) {
+            return ['error' => 'Exception occurred: ' . $e->getMessage()];
+        }
+    }
 }

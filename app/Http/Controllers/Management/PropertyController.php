@@ -15,7 +15,7 @@ class PropertyController extends Controller
         $this->propertyService = $propertyService;
     }
 
-    public function listProperties($request)
+    public function listProperties(Request $request)
     {
         $user_id = $request->input('user_id');
         $properties = $this->propertyService->getAllProperties($user_id);

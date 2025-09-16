@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\Reports\InseminationReportService;
 use Illuminate\Http\Request;
-use App\Services\Report\InseminationReportService;
 
 class ReportController extends Controller
 {

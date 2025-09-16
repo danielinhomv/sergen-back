@@ -6,34 +6,15 @@ use App\Models\User;
 
 class UserRepository
 {
-    public function getUser($name)
+    public function find($id)
     {
-        try {
-            $user = User::where('name', $name)->first();
-            if (!$user) {
-                return ['error' => 'User not found'];
-            }
-            return $user;
-        } catch (\Exception $e) {
-            return ['error' => 'Failed to retrieve user', 'details' => $e->getMessage()];
-        }
-
+        return User::find($id);
     }
 
-    public function updateUser($id, $request)
+    public function findByName($name)
     {
-        try {
-            $user = User::find($id);
-            if (!$user) {
-                return ['error' => 'User not found'];
-            }
-            $user->update($request);
-            return [
-                'message' => 'User updated successfully',
-                'user' => $user
-            ];
-        } catch (\Exception $e) {
-            return ['error' => 'Failed to update user', 'details' => $e->getMessage()];
-        }
+        return User::where('name', $name)->first();
     }
+    
+    // Code for BovinRepository would go here
 }

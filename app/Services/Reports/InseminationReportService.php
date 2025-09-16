@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Services\Report;
+namespace App\Services\Reports;
 
-use App\Repositories\Report\InseminationReportRepository;
+use App\Repositories\Reports\InseminationReportRepository;
+use App\Services\Report\DialogFlowService;
 use Illuminate\Http\Request;
 
 

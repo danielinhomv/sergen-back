@@ -26,7 +26,7 @@ class BullController extends Controller
         return response()->json($createResponse);
     }
 
-    public function all($request)
+    public function all(Request $request)
     {
         $bulls = $this->bullService->all($request);
         if (isset($bulls['error'])) {
@@ -35,7 +35,7 @@ class BullController extends Controller
         return response()->json($bulls);
     }
 
-    public function exists($request)
+    public function exists(Request $request)
     {
         $existsResponse = $this->bullService->exists($request);
         if (isset($existsResponse['error'])) {

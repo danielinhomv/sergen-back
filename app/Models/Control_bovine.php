@@ -9,7 +9,7 @@ class Control_bovine extends Model
     public $timestamps = false;
     protected $guarded = [];
 
-    public function confirmatory_ultrasound()
+    public function confirmatory_ultrasounds()
     {
         return $this->hasMany(Confirmatory_ultrasound::class);
     }
@@ -24,7 +24,7 @@ class Control_bovine extends Model
         return $this->hasOne(Implant_retrieval::class);
     }
 
-    public function insemination()
+    public function inseminations()
     {
         return $this->hasMany(Insemination::class);
     }

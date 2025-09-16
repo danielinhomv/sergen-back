@@ -7,49 +7,66 @@ use Illuminate\Support\Facades\Hash;
 
 class UserService
 {
-
     private UserRepository $userRepository;
 
     public function __construct(UserRepository $userRepository)
     {
         $this->userRepository = $userRepository;
     }
-
+    
     public function getUser($name)
     {
-        return $this->userRepository->getUser($name);
+        try {
+            $user = $this->userRepository->findByName($name);
+
+            if (!$user) {
+                return ['error' => 'User not found'];
+            }
+            return $user;
+        } catch (\Exception $e) {
+            return ['error' => 'Failed to retrieve user', 'details' => $e->getMessage()];
+        }
+
     }
 
-    public function login($request)
+    public function updateUser($request)
     {
-        $name = $request->input('name');
-        $user = $this->getUser($name);
-
-        if (isset($user['error'])) {
-            return $user['error'];
-        }
-
-        if (!Hash::check($request->password, $user->password)) {
-            return [
-                'error' => 'The password is incorrect'
-            ];
-        }
-
         try {
-            $user->tokens()->delete();
+            $user = $this->userRepository->find($request->input('user_id'));
+
+            if (!$user) {
+                return ['error' => 'User not found'];
+            }
+            $user->update($request);
+            return [
+                'message' => 'User updated successfully',
+                'user' => $user
+            ];
+        } catch (\Exception $e) {
+            return ['error' => 'Failed to update user', 'details' => $e->getMessage()];
+        }
+    }
+
+    public function login ($request)
+    {
+        try {
+            $name = $request->input('name');
+            $password = $request->input('password');
+
+            $user = $this->userRepository->findByName($name);
+
+            if (!$user || !Hash::check($password, $user->password)) {
+                return ['error' => 'Invalid credentials'];
+            }
+
             $token = $user->createToken('auth_token')->plainTextToken;
 
             return [
-                'message' => 'Logged in successfully!',
-                'token' => $token
+                'message' => 'Login successful',
+                'token' => $token,
             ];
         } catch (\Exception $e) {
-            return ['error' => 'Failed to create token', 'details' => $e->getMessage()];
+            return ['error' => 'Failed to login', 'details' => $e->getMessage()];
         }
-    }
-
-    public function updateUser($id, $request)
-    {
-        return $this->userRepository->updateUser($id, $request);
     }
 }

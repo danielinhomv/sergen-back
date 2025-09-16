@@ -15,7 +15,7 @@ class ControlController extends Controller
         $this->controlService = $controlService;
     }
 
-    public function startNewProtocol($request)
+    public function startNewProtocol(Request $request)
     {
         $property_id = $request->input('property_id');
         $protocol = $this->controlService->startNewProtocol($property_id);

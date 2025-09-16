@@ -3,21 +3,21 @@
 namespace App\Http\Controllers\Management;
 
 use App\Http\Controllers\Controller;
-use App\Services\Management\ImplantRetrievalsService;
+use App\Services\Management\UltrasoundService;
 use Illuminate\Http\Request;
 
-class ImplantRetrievalsController extends Controller
+class UltrasoundController extends Controller
 {
-    private ImplantRetrievalsService $implantRetrievalsService;   
+    private UltrasoundService $ultrasoundService;   
 
-    public function __construct(ImplantRetrievalsService $implantRetrievalsService)
+    public function __construct(UltrasoundService $ultrasoundService)
     {
-        $this->implantRetrievalsService = $implantRetrievalsService;
+        $this->ultrasoundService = $ultrasoundService;
     }   
 
     public function create(Request $request)
     {
-        $createResponse = $this->implantRetrievalsService->create($request);
+        $createResponse = $this->ultrasoundService->create($request);
 
         if (isset($createResponse['error'])) {
             return response()->json(['error' => $createResponse['error']], 400);
@@ -28,7 +28,7 @@ class ImplantRetrievalsController extends Controller
 
     public function get(Request $request)
     {
-        $getResponse = $this->implantRetrievalsService->get($request);
+        $getResponse = $this->ultrasoundService->get($request);
 
         if (isset($getResponse['error'])) {
             return response()->json(['error' => $getResponse['error']], 400);

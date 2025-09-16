@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories\Report;
+namespace App\Repositories\Reports;
 
 use App\Models\Current_session;
 use App\Models\Insemination;
