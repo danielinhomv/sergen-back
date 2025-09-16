@@ -62,7 +62,7 @@ class UltrasoundService
     public function get($request) 
     {
     try {
-            $bovineControl=Control_bovine::where('bovine-controls_id', $request->input('bovine-controls_id'))->get();
+            $bovineControl=$this->controlBovineRepository->create($request);
             
             if (!$bovineControl) {
                 return ['error' => 'Bovine Control not found'];

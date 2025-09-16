@@ -11,5 +11,10 @@ class ControlBovineRepository
     {
         return Control_bovine::find($id);
     }
+
+    public function create($request)
+    {
+        return Control_bovine::create($request->all());
+    }
     // Code for ControlBovineRepository would go here
 }
