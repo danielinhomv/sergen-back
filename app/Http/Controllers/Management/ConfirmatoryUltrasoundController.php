@@ -31,7 +31,7 @@ class ConfirmatoryUltrasoundController extends Controller
         return response()->json($confirmatoryUltrasoundCreate);
     }
 
-    public function all($request){
+    public function all(Request $request){
 
 
         $confirmatoryUltrasounds = $this->confirmatoryUltrasoundService->all($request);

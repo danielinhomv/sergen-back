@@ -19,12 +19,7 @@ class DatabaseSeeder extends Seeder
 
         User::factory()->create([
             'name' => 'admin',
-            'email' => 'admin@example.com',
-            'password' => Hash::make('password'),
-            'licence' => '12345-LICENCE',
-            'type_licence' => 'mensual',
-            'phone_number' => '72173408',
-            'date_of_init_licency' =>Carbon::now()
+            'password' => Hash::make('password')
         ]);
     }
 }

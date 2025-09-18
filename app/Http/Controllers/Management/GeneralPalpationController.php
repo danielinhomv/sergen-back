@@ -32,7 +32,7 @@ class GeneralPalpationController extends Controller
 
     public function get(Request $request)
     {
-        $generalPalpation = $this->generalPalpationService->create($request);
+        $generalPalpation = $this->generalPalpationService->get($request);
 
         if(isset($generalPalpation['error'])){
             return response()->json(

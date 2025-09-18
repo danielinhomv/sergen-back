@@ -15,17 +15,17 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('password');
-            $table->string('licence');
-            $table->string('phone_number');
-            $table->enum('type_licence',['mensual','semestral','anual']);
-            $table->boolean('enabled')->default(true);
-            $table->dateTime('date_of_init_licency');
+            //$table->string('licence');
+            //$table->string('phone_number');
+            //$table->enum('type_licence',['mensual','semestral','anual']);
+            //$table->boolean('enabled')->default(true);
+            //$table->dateTime('date_of_init_licency');
             $table->rememberToken();
             $table->timestamps();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
-            $table->string('email')->primary();
+            $table->string('name')->primary();
             $table->string('token');
             $table->timestamp('created_at')->nullable();
         });

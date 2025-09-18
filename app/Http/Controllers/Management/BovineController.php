@@ -26,7 +26,7 @@ class BovineController extends Controller
         return response()->json($createResponse);
     }
 
-    public function all($request)
+    public function all(Request $request)
     {
         $property_id = $request->input('property_id');
         $bovines = $this->bovineService->all($property_id);

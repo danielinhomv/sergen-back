@@ -22,6 +22,6 @@ class InseminationController extends Controller
     }
 
     public function all(Request $request){
-        return $this->inseminationService->create($request);
+        return $this->inseminationService->all($request);
     }
 }
