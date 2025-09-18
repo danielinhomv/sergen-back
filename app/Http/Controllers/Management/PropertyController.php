@@ -27,7 +27,7 @@ class PropertyController extends Controller
 
     public function createProperty(Request $request)
     {
-        $property = $this->propertyService->createProperty($request->all());
+        $property = $this->propertyService->createProperty($request);
         if (isset($property['error'])) {
             return response()->json(['error' => $property['error']], 400);
         }
@@ -54,8 +54,7 @@ class PropertyController extends Controller
 
     public function nameExists(Request $request)
     {
-        $name = $request->input('name');
-        $exist = $this->propertyService->nameExists($name);
+        $exist = $this->propertyService->nameExists($request);
         if (isset($exist['error'])) {
             return response()->json(['error' => $exist['error']], 400);
         }

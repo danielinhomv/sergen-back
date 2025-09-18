@@ -6,7 +6,7 @@ use App\Models\Property;
 
 class PropertyRepository
 {
-    public function find($id)
+    public function findById($id)
     {
         return Property::find($id);
     }

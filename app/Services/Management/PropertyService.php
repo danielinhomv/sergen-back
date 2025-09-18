@@ -13,7 +13,7 @@ class PropertyService
     {
         $this->propertyRepository = $propertyRepository;
     }
-    
+
     public function getAllProperties($user_id)
     {
         try {
@@ -36,9 +36,8 @@ class PropertyService
     {
         try {
             return $properties->map(function ($property) {
-               return $this->toMapSingle($property);
+                return $this->toMapSingle($property);
             });
-
         } catch (\Exception $e) {
             return ['error' => 'Exception occurred: ' . $e->getMessage()];
         }
@@ -62,7 +61,6 @@ class PropertyService
     {
         try {
             $propertie = $this->propertyRepository->create($request);
-            
             $propertie->save();
             return
                 [
@@ -77,20 +75,19 @@ class PropertyService
     private function toMapSingle($property)
     {
 
-            return [
-                'id' => $property->id,
-                'name' => $property->name,
-                'place' => $property->place,
-                'phone_number' => $property->phone_number,
-                'owner_name' => $property->owner_name
-            ];
-      
+        return [
+            'id' => $property->id,
+            'name' => $property->name,
+            'place' => $property->place,
+            'phone_number' => $property->phone_number,
+            'owner_name' => $property->owner_name,
+        ];
     }
 
     public function getPropertyById($id)
     {
         try {
-            $property = $this->propertyRepository->find($id);
+            $property = $this->propertyRepository->findById($id);
             if (!$property) {
                 return ['error' => 'Property not found'];
             }
@@ -104,15 +101,17 @@ class PropertyService
         }
     }
 
-    public function updateProperty($request, $id)
+    public function updateProperty($id, $request)
     {
         try {
-            $property = $this->propertyRepository->find($id);
+            $property = $this->propertyRepository->findById($id);
 
             if (!$property) {
                 return ['error' => 'Property not found'];
             }
-            $property->update($request);
+
+            $property->update($request->all());
+
             return
                 [
                     'message' => 'Property updated successfully',
@@ -126,13 +125,17 @@ class PropertyService
     public function deleteProperty($id)
     {
         try {
-            $property = $this->propertyRepository->find($id);
+            $property = $this->propertyRepository->findById($id);
 
             if (!$property) {
                 return ['error' => 'Property not found'];
             }
             $property->delete();
-            return ['message' => 'Property deleted successfully'];
+            return
+                [
+                    'message' => 'Property deleted successfully',
+                    'property' => $this->toMapSingle($property)
+                ];
         } catch (\Exception $e) {
             return ['error' => 'Failed to delete property', 'details' => $e->getMessage()];
         }
