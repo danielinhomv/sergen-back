@@ -7,12 +7,9 @@ use App\Models\Control;
 
 class ControlRepository
 {
-    public function create($property_id)
+    public function create($request)
     {
-        return Control::create([
-            'status' => 'in progress',
-            'property_id' => $property_id,
-        ]);
+        return Control::create($request->all());
     }
     // Code for BovinRepository would go here
 }

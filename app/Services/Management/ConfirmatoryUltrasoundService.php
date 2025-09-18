@@ -36,7 +36,11 @@ class ConfirmatoryUltrasoundService
                 return ['error' => 'Failed to create Implant Retrieval'];
             }
 
-            return $this->toMapSingle($confirmatoryUltrasound);
+            return [
+                'message' => 'Confirmatory_ultrasound created successfully',
+                'confirmatory_ultrasound' => $this->toMapSingle($confirmatoryUltrasound)
+            ];
+
         } catch (\Exception $e) {
             return ['error' => 'Exception occurred: ' . $e->getMessage()];
         }
@@ -78,8 +82,12 @@ class ConfirmatoryUltrasoundService
             if (!$ultrasounds) {
                 return ['error' => 'Implant Retrieval not found'];
             }
+            
+            return [
+                'message' => 'Confirmatory_ultrasound retrievals successfully',
+                'confirmatory_ultrasound' => $this->toMap($ultrasounds)
+            ];
 
-            return $this->toMap($ultrasounds);
         } catch (\Exception $e) {
             return ['error' => 'Exception occurred: ' . $e->getMessage()];
         }

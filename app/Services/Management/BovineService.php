@@ -19,12 +19,18 @@ class BovineService
 
     public function all($property_id)
     {
-        $property = $this->propertyRepository->find($property_id);
+        $property = $this->propertyRepository->findById($property_id);
+
         if (!$property) {
             return ['error' => 'Property not found'];
         }
+
         $bovines = $property->bovines;
-        return $this->toMap($bovines);
+        return
+            [
+                'message' => 'Bovine retrievals successfully',
+                'bovine' => $this->toMap($bovines)
+            ];
     }
 
     private function toMap($bovines)
@@ -90,5 +96,4 @@ class BovineService
             return ['error' => 'Failed to create bovine', 'details' => $e->getMessage()];
         }
     }
-
 }

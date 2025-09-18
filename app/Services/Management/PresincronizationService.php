@@ -11,7 +11,7 @@ class PresincronizationService
     private ControlBovineRepository $controlBovineRepository;
     private PresincronizationRepository $presincronizationRepository;
 
-    public function __construct(ControlBovineRepository $controlBovineRepository,PresincronizationRepository $presincronizationRepository)
+    public function __construct(ControlBovineRepository $controlBovineRepository, PresincronizationRepository $presincronizationRepository)
     {
         $this->controlBovineRepository = $controlBovineRepository;
         $this->presincronizationRepository = $presincronizationRepository;
@@ -26,8 +26,11 @@ class PresincronizationService
             if (!$presincronization) {
                 return ['error' => 'Failed to create Presincronization'];
             }
-
-            return $this->toMapSingle($presincronization);
+            return
+                [
+                    'message' => 'presincronization created successfully',
+                    'presincronization' => $this->toMapSingle($presincronization)
+                ];
         } catch (\Exception $e) {
             return ['error' => 'Failed to create Presincronization', 'details' => $e->getMessage()];
         }
@@ -54,19 +57,23 @@ class PresincronizationService
         try {
 
             $bovineControl = $this->controlBovineRepository->find($request->input('bovine-controls_id'));
-            
+
             if ($bovineControl->isEmpty()) {
                 return ['error' => 'Bovine Control not found'];
             }
 
-            $presincronizations = $bovineControl->pre_sincronization();
+            $presincronization = $bovineControl->pre_sincronization();
 
-            if ($presincronizations->isEmpty()) {
+            if (!$presincronization) {
                 return ['error' => 'No Presincronizations found for this Bovine Control'];
             }
 
-            return $this->toMapSingle($presincronizations);
-            
+            return
+                [
+                    'message' => 'presincronization retrieved successfully',
+                    'presincronizations' => $this->toMapSingle($presincronization)
+                ];
+
         } catch (\Exception $e) {
             return ['error' => 'Failed to retrieve Presincronizations', 'details' => $e->getMessage()];
         }

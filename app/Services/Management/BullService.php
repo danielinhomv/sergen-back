@@ -26,13 +26,15 @@ class BullService
                 return ['error' => 'User not found'];
             }
 
-            $name = $request->input('name');
-
-            $bull = $this->bullRepository->create($name,$user_id);
+            $bull = $this->bullRepository->create($request);
 
             $bull->save();
 
-            return $this->toMapSingle($bull);
+             return [
+                'message' => 'Bull created successfully',
+                'bull' => $this->toMapSingle($bull)
+            ];
+
         } catch (\Exception $e) {
             return ['error' => 'Failed to create bull: ' . $e->getMessage()];
         }
@@ -52,11 +54,18 @@ class BullService
     {
         try {
             $user = $this->userRepository->find($user_id);
+            
             if (!$user) {
                 return ['error' => 'User not found'];
             }
+            
             $bulls = $user->bulls;
-            return $this->toMap($bulls);
+            
+             return [
+                'message' => 'Bull Retrievals successfully',
+                'bovine' =>$this->toMap($bulls)
+            ];
+
         } catch (\Exception $e) {
             return ['error' => 'Failed to retrieve bulls: ' . $e->getMessage()];
         }

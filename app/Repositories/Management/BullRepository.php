@@ -13,11 +13,8 @@ class BullRepository
             ->exists();
     }
 
-    public function create($name , $user_id)
+    public function create($request)
     {
-        return Bull::create([
-                'name' => $name,
-                'user_id' => $user_id
-            ]);
+        return Bull::create($request->all());
     }
 }

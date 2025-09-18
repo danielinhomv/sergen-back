@@ -11,12 +11,12 @@ class ImplantRetrievalsService
     private ControlBovineRepository $controlBovineRepository;
     private ImplantRetrievalsRepository $implantRetrievalsRepository;
 
-    public function __construct(ControlBovineRepository $controlBovineRepository,ImplantRetrievalsRepository $implantRetrievalsRepository)
+    public function __construct(ControlBovineRepository $controlBovineRepository, ImplantRetrievalsRepository $implantRetrievalsRepository)
     {
         $this->controlBovineRepository = $controlBovineRepository;
         $this->implantRetrievalsRepository = $implantRetrievalsRepository;
     }
-    
+
     public function create($request)
     {
         try {
@@ -26,8 +26,12 @@ class ImplantRetrievalsService
             if (!$implantRetrieval) {
                 return ['error' => 'Failed to create Implant Retrieval'];
             }
+            return
+                [
+                    'message' => 'Implant_retrieval created successfully',
+                    'implant_retrieval' => $this->toMapSingle($implantRetrieval)
+                ];
 
-            return $this->toMapSingle($implantRetrieval);
         } catch (\Exception $e) {
             return ['error' => 'Exception occurred: ' . $e->getMessage()];
         }
@@ -37,7 +41,7 @@ class ImplantRetrievalsService
     {
         try {
             $bovineControl = $this->controlBovineRepository->find($request->input('bovine-controls_id'));
-            
+
             if (!$bovineControl) {
                 return ['error' => 'Bovine Control not found'];
             }
@@ -47,8 +51,11 @@ class ImplantRetrievalsService
             if (!$implantRetrieval) {
                 return ['error' => 'Implant Retrieval not found'];
             }
-
-            return $this->toMapSingle($implantRetrieval);
+            return
+                [
+                    'message' => 'Implant_retrieval retrieved successfully',
+                    'implant_retrieval' => $this->toMapSingle($implantRetrieval)
+                ];
         } catch (\Exception $e) {
             return ['error' => 'Exception occurred: ' . $e->getMessage()];
         }

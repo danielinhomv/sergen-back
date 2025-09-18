@@ -27,7 +27,12 @@ class BirthService
                 return ['error' => 'Failed to create birth'];
             }
 
-            return $this->toMapSingle($birth);
+             return
+                [
+                    'message' => 'Birth created successfully',
+                    'birth' => $this->toMapSingle($birth)
+                ];
+
         } catch (\Exception $e) {
             return ['error' => 'Exception occurred: ' . $e->getMessage()];
         }
@@ -48,7 +53,11 @@ class BirthService
                 return ['error' => 'Implant Retrieval not found'];
             }
 
-            return $this->toMapSingle($birth);
+            return
+                [
+                    'message' => 'Birth Retrieved successfully',
+                    'Birth' => $this->toMapSingle($birth)
+                ];
 
         } catch (\Exception $e) {
             return ['error' => 'Exception occurred: ' . $e->getMessage()];

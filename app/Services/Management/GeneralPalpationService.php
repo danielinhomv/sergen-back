@@ -11,13 +11,14 @@ class GeneralPalpationService
     private ControlBovineRepository $controlBovineRepository;
     private GeneralPalpationRepository $generalPalpationRepository;
 
-    public function __construct(ControlBovineRepository $controlBovineRepository,
-                                GeneralPalpationRepository $generalPalpationRepository)
-    {
+    public function __construct(
+        ControlBovineRepository $controlBovineRepository,
+        GeneralPalpationRepository $generalPalpationRepository
+    ) {
         $this->controlBovineRepository = $controlBovineRepository;
         $this->generalPalpationRepository = $generalPalpationRepository;
     }
-    
+
     public function create($request)
     {
         try {
@@ -28,7 +29,12 @@ class GeneralPalpationService
                 return ['error' => 'Failed to create Implant Retrieval'];
             }
 
-            return $this->toMapSingle($generalPalpation);
+            return
+                [
+                    'message' => 'General palpation created successfully',
+                    'general palpation' => $this->toMapSingle($generalPalpation)
+                ];
+
         } catch (\Exception $e) {
             return ['error' => 'Exception occurred: ' . $e->getMessage()];
         }
@@ -38,7 +44,7 @@ class GeneralPalpationService
     {
         try {
             $bovineControl = $this->controlBovineRepository->find($request->input('bovine-controls_id'));
-            
+
             if (!$bovineControl) {
                 return ['error' => 'Bovine Control not found'];
             }
@@ -48,8 +54,12 @@ class GeneralPalpationService
             if (!$generalPalpation) {
                 return ['error' => 'Implant Retrieval not found'];
             }
+            return
+                [
+                    'message' => 'General palpation retrieved successfully',
+                    'general palpation' => $this->toMapSingle($generalPalpation)
+                ];
 
-            return $this->toMapSingle($generalPalpation);
         } catch (\Exception $e) {
             return ['error' => 'Exception occurred: ' . $e->getMessage()];
         }

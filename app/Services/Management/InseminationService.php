@@ -11,7 +11,7 @@ class InseminationServices
     private ControlBovineRepository $controlBovineRepository;
     private InseminationRepository $inseminationRepository;
 
-    public function __construct(ControlBovineRepository $controlBovineRepository,InseminationRepository $inseminationRepository)
+    public function __construct(ControlBovineRepository $controlBovineRepository, InseminationRepository $inseminationRepository)
     {
         $this->controlBovineRepository = $controlBovineRepository;
         $this->inseminationRepository = $inseminationRepository;
@@ -32,8 +32,12 @@ class InseminationServices
             if (!$insemination) {
                 return ['error' => 'Failed to create Implant Retrieval'];
             }
-
-            return $this->toMapSingle($insemination);
+            return
+                [
+                    'message' => 'insemination created successfully',
+                    'insemination' => $this->toMapSingle($insemination)
+                ];
+                
         } catch (\Exception $e) {
             return ['error' => 'Exception occurred: ' . $e->getMessage()];
         }
@@ -65,8 +69,12 @@ class InseminationServices
             if (!$inseminations) {
                 return ['error' => 'Inseminatios not found'];
             }
+            return
+                [
+                    'message' => 'insemination retrievals successfully',
+                    'insemination' => $this->toMap($inseminations)
+                ];
 
-            return $this->toMap($inseminations);
         } catch (\Exception $e) {
             return ['error' => 'Exception occurred: ' . $e->getMessage()];
         }
@@ -75,22 +83,21 @@ class InseminationServices
     private function toMapSingle($insemination)
     {
 
-            $bull = $insemination->bull();
+        $bull = $insemination->bull();
 
-            if ($bull) {
-                return ['error' => 'Bull not Found in Array'];
-            }
+        if ($bull) {
+            return ['error' => 'Bull not Found in Array'];
+        }
 
-            return [
-                'id' => $insemination->id,
-                'body_condition_score' => $insemination->body_condition_score,
-                'heat_quality' => $insemination->heat_cuality,
-                'protocol_details' => $insemination->protocol_details,
-                'observation' => $insemination->observation,
-                'others' => $insemination->others,
-                'date' => $insemination->date,
-                'bull' => $bull()->name
-            ];
-
+        return [
+            'id' => $insemination->id,
+            'body_condition_score' => $insemination->body_condition_score,
+            'heat_quality' => $insemination->heat_cuality,
+            'protocol_details' => $insemination->protocol_details,
+            'observation' => $insemination->observation,
+            'others' => $insemination->others,
+            'date' => $insemination->date,
+            'bull' => $bull()->name
+        ];
     }
 }

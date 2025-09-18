@@ -31,7 +31,7 @@ class ControlService
         try {
             DB::beginTransaction();
 
-            $property = $this->propertyRepository->find($property_id);
+            $property = $this->propertyRepository->findById($property_id);
 
             if (!$property) {
                 DB::rollBack();
