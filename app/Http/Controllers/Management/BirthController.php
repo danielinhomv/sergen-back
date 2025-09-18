@@ -16,7 +16,7 @@ class BirthController extends Controller
         
     }
 
-    public function create($request)
+    public function create(Request $request)
     {
         $birthCreate = $this->birthService->create($request);
         

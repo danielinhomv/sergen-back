@@ -17,8 +17,7 @@ class ControlController extends Controller
 
     public function startNewProtocol(Request $request)
     {
-        $property_id = $request->input('property_id');
-        $protocol = $this->controlService->startNewProtocol($property_id);
+        $protocol = $this->controlService->startNewProtocol($request);
         if (isset($protocol['error'])) {
             return response()->json(['error' => $protocol['error']], 400);
         }

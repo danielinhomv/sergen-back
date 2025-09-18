@@ -10,8 +10,8 @@ class ControlService
 {
     private PropertyRepository $propertyRepository;
     private ControlRepository $controlRepository;
-    
-    public function __construct(PropertyRepository $propertyRepository,ControlRepository $controlRepository)
+
+    public function __construct(PropertyRepository $propertyRepository, ControlRepository $controlRepository)
     {
         $this->propertyRepository = $propertyRepository;
         $this->controlRepository = $controlRepository;
@@ -20,17 +20,17 @@ class ControlService
     private function createProtocolo($property_id)
     {
 
-            $protocolo = $this->controlRepository->create($property_id);
-            $protocolo->save();
-            return $protocolo;
-        
+        $protocolo = $this->controlRepository->create($property_id);
+        $protocolo->save();
+        return $protocolo;
     }
 
-    public function startNewProtocol($property_id)
+    public function startNewProtocol($request)
     {
         try {
             DB::beginTransaction();
 
+            $property_id = $request->input('property_id');
             $property = $this->propertyRepository->findById($property_id);
 
             if (!$property) {
@@ -39,12 +39,12 @@ class ControlService
             }
 
             $control = $property->control;
-            
+
             if ($control) {
                 $control->delete();
             }
 
-            $protocolo=$this->createProtocolo($property_id);
+            $protocolo = $this->createProtocolo($property_id);
 
             DB::commit();
 
@@ -52,11 +52,9 @@ class ControlService
                 'message' => 'Protocolo updated successfully',
                 'protocolo' => $protocolo
             ];
-
         } catch (\Exception $e) {
             DB::rollBack();
             return ['error' => 'Failed to start new protocol', 'details' => $e->getMessage()];
         }
     }
-    
 }
