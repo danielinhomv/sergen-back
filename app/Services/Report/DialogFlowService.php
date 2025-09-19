@@ -4,14 +4,15 @@ namespace App\Services\Report;
 
 use Firebase\JWT\JWT;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class DialogFlowService
 {
     private string $dialogflowApiUrl = 'https://dialogflow.googleapis.com/v2/projects/YOUR_PROJECT_ID/agent/sessions/SESSION_ID:detectIntent';
     private ?array $serviceAccountCredentials = null;
     private int $tokenExpiryBuffer = 3600; // Tiempo en segundos antes de la expiración para renovar el token
-  
-     
+
+
     public function getServiceAccountCredentials(): ?array
     {
         return $this->serviceAccountCredentials;
@@ -23,10 +24,10 @@ class DialogFlowService
 
     public function loadCredentials(): ?array
     {
-        $filePath = storage_path('dialog_flow_sergen.json');
+        $filePath = storage_path('app/private/dialog_flow_sergen.json');
 
         if (!file_exists($filePath)) {
-            return ['error' => 'El archivo de credenciales sergen.json no se encuentra en el directorio storage.'];
+            return ['error' => 'El archivo de credenciales dialog_flow_sergen.json no se encuentra en el directorio storage.'];
         }
 
         $jsonContent = file_get_contents($filePath);
@@ -50,7 +51,7 @@ class DialogFlowService
                 'exp' => $now + $this->tokenExpiryBuffer, // Expira en 1 hora
                 'iat' => $now,
             ];
-            
+
             // Genera el JWT firmado con la clave privada
             $jwt = JWT::encode($jwt_payload, $this->serviceAccountCredentials['private_key'], 'RS256');
 
@@ -66,7 +67,6 @@ class DialogFlowService
             }
 
             return $accessToken;
-
         } catch (\Exception $e) {
             return ['error' => 'Error de autenticación: ' . $e->getMessage()];
         }
@@ -75,7 +75,7 @@ class DialogFlowService
     public function reportRequest($text, $sessionId)
     {
 
-          try {
+        try {
             // 1. Obtiene un token de acceso JWT para la API de Dialogflow
             $accessToken = $this->getAccessToken();
 
@@ -85,8 +85,13 @@ class DialogFlowService
 
             // 2. Llama a la API de Dialogflow con el token de acceso
             $service = $this->getServiceAccountCredentials();
-            $projectId = $this->$service['project_id'];
 
+            $projectId = $service['project_id'] ?? null;
+            
+            if (!$projectId) {
+                return ['error' => 'El project_id no está definido en las credenciales.'];
+            }
+            
             $apiUrl = str_replace(
                 ['YOUR_PROJECT_ID', 'SESSION_ID'],
                 [$projectId, $sessionId],
@@ -105,7 +110,9 @@ class DialogFlowService
             ]);
 
             $dialogflowResult = $response->json();
+            Log::info($dialogflowResult);
             $parameters = $dialogflowResult['queryResult']['parameters'] ?? [];
+            Log::info($parameters);
             return $parameters;
         } catch (\Exception $e) {
             return [

@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Report;
 
-use App\Services\Reports\InseminationReportService;
+use App\Http\Controllers\Controller;
+use App\Services\Report\InseminationReportService;
 use Illuminate\Http\Request;
 
-class ReportController extends Controller
+class InseminationReportController extends Controller
 {
     protected InseminationReportService $reportService;
 

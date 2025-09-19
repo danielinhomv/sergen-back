@@ -2,13 +2,13 @@
 
 namespace App\Repositories\Management;
 
-use App\Models\Pre_sincronization;
+use App\Models\Presincronization;
 
 class PresincronizationRepository
 {
 
     public function create($request)
     {
-        return Pre_sincronization::create($request->all());
+        return Presincronization::create($request->all());
     }
 }

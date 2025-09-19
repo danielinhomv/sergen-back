@@ -12,6 +12,7 @@ use App\Http\Controllers\Management\InseminationController;
 use App\Http\Controllers\Management\PresincronizationController;
 use App\Http\Controllers\Management\PropertyController;
 use App\Http\Controllers\Management\UltrasoundController;
+use App\Http\Controllers\Report\InseminationReportController;
 use App\Http\Controllers\ReportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -81,6 +82,8 @@ Route::prefix('management')->group(function () {
     Route::delete('/delete/{id}', [PropertyController::class, 'deleteProperty']);
     Route::post('/name-exists', [PropertyController::class, 'nameExists']);
     Route::get('/{id}', [PropertyController::class, 'getPropertyById']);
+    Route::post('/start-work', [PropertyController::class, 'startWork']);
+    Route::post('/finish-work', [PropertyController::class, 'finishWork']);
   });
 
   Route::prefix('ultrasound')->group(function () {
@@ -92,7 +95,7 @@ Route::prefix('management')->group(function () {
 
 Route::prefix('report')->group(function () {
 
-  Route::post('/insemination', [ReportController::class, 'getInseminationReport']); // generar reporte de inseminación
+  Route::post('/insemination', [InseminationReportController::class, 'getInseminationReport']); // generar reporte de inseminación
 
 });
 

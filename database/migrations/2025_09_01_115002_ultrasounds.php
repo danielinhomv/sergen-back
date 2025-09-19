@@ -19,7 +19,7 @@ return new class extends Migration
             $table->text('used_products_summary')->nullable();
             $table->string('work_team')->nullable();
             $table->date('date');
-            $table->foreignId('bovine-controls_id')->constrained('bovine-controls')->onDelete('cascade');
+            $table->foreignId('control_bovine_id')->constrained('control_bovines')->onDelete('cascade');
         });
     }
 

@@ -31,7 +31,7 @@ class Control_bovine extends Model
 
     public function pre_sincronization()
     {
-        return $this->hasOne(Pre_sincronization::class);
+        return $this->hasOne(Presincronization::class);
     }
 
     public function ultrasound()

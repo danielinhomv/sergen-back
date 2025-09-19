@@ -3,15 +3,17 @@
 namespace App\Services\Management;
 
 use App\Repositories\Management\PropertyRepository;
+use App\Repositories\Management\UserRepository;
 
 class PropertyService
 {
 
     private PropertyRepository $propertyRepository;
-
-    public function __construct(PropertyRepository $propertyRepository)
+    private UserRepository $userRepository;
+    public function __construct(PropertyRepository $propertyRepository, UserRepository $userRepository)
     {
         $this->propertyRepository = $propertyRepository;
+        $this->userRepository = $userRepository;
     }
 
     public function getAllProperties($user_id)
@@ -61,7 +63,6 @@ class PropertyService
     {
         try {
             $propertie = $this->propertyRepository->create($request);
-            $propertie->save();
             return
                 [
                     'message' => 'Property created successfully',
@@ -138,6 +139,64 @@ class PropertyService
                 ];
         } catch (\Exception $e) {
             return ['error' => 'Failed to delete property', 'details' => $e->getMessage()];
+        }
+    }
+
+    public function startWork($request)
+    {
+        try {
+            //code...
+            $user_id = $request->input('user_id');
+            $user = $this->userRepository->find($user_id);
+
+            if (!$user) {
+                return [
+                    'error' => 'User not found'
+                ];
+            }
+
+            $currentSession = $user->current_session;
+            $property_id = $request->input('property_id');
+
+            if (!$currentSession) {
+                $currentSession = $this->propertyRepository->createCurrentSession($user_id, $property_id);
+            } else {
+                $currentSession->update([
+                    'property_id' => $property_id,
+                    'active' => true
+                ]);
+            }
+
+            return [
+                'message' => 'current_session start successfully',
+                'current_session' => $currentSession
+            ];
+        } catch (\Exception $e) {
+            return ['error' => 'Failed to start current_session', 'details' => $e->getMessage()];
+        }
+    }
+
+    public function finishWork($request)
+    {
+        try {
+            $user_id = $request->input('user_id');
+            $user = $this->userRepository->find($user_id);
+
+            if (!$user) {
+                return [
+                    'error' => 'User not found'
+                ];
+            }
+
+            $currentSession = $user->current_session;
+            $currentSession->update(['active' => false]);
+
+            return [
+                'message' => 'current_session finalized successfully',
+                'current_session' => $currentSession
+            ];
+        } catch (\Exception $e) {
+            return ['error' => 'Failed to finalized current_session', 'details' => $e->getMessage()];
         }
     }
 }

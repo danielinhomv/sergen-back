@@ -69,4 +69,23 @@ class PropertyController extends Controller
         }
         return response()->json($property);
     }
+
+    public function startWork(Request $request)
+    {
+        $currentSession = $this->propertyService->startWork($request);
+        if (isset($currentSession['error'])) {
+            return response()->json(['error' => $currentSession['error']]);
+        }
+        return response()->json($currentSession);
+    }
+
+    public function finishWork(Request $request)
+    {
+        $currentSession = $this->propertyService->finishWork($request);
+        if (isset($currentSession['error'])) {
+            return response()->json(['error' => $currentSession['error']]);
+        }
+        return response()->json($currentSession);
+    }
+    
 }

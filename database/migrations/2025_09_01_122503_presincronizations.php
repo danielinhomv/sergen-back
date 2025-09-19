@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pre-sincronizations', function (Blueprint $table) {
+        Schema::create('presincronizations', function (Blueprint $table) {
             $table->id();
             $table->string('reproductive_vaccine')->nullable();
             $table->string('sincrogest_product')->nullable();
             $table->string('antiparasitic_product')->nullable();
             $table->boolean('vitamins_and_minerals')->default(false);
             $table->date('application_date');
-            $table->foreignId('bovine-controls_id')->constrained('bovine-controls')->onDelete('cascade');
+            $table->foreignId('control_bovine_id')->constrained('control_bovines')->onDelete('cascade');
         });
     }
 

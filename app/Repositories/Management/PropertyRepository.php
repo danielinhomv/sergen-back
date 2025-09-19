@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Management;
 
+use App\Models\Current_session;
 use App\Models\Property;
 
 class PropertyRepository
@@ -25,6 +26,14 @@ class PropertyRepository
 
     public function create($request){
         return Property::create($request->all());
+    }
+
+    public function createCurrentSession($user_id,$property_id){
+        return Current_session::create([
+            'user_id'=>$user_id,
+            'property_id'=>$property_id,
+            'active'=> true
+        ]);
     }
     // Code for BovinRepository would go here
 }

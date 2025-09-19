@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Services\Reports;
+namespace App\Services\Report;
 
-use App\Repositories\Reports\InseminationReportRepository;
+use App\Repositories\Report\InseminationReportRepository;
 use App\Services\Report\DialogFlowService;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Log;
+use PgSql\Lob;
 
 class InseminationReportService
 {
@@ -21,7 +22,7 @@ class InseminationReportService
         $this->inseminationRepository = $inseminationRepository;
     }
 
-    public function generateReport(Request $request): array
+    public function generateReport($request): array
     {
         // Carga las credenciales del archivo JSON
         $credentialsResult = $this->dialogFlowService->loadCredentials();
@@ -38,6 +39,7 @@ class InseminationReportService
 
 
         $this->sessionId = $userId ?? 'default_session';
+
         if (is_null($property_id)) {
             return [
                 'error' => 'El ID de control es requerido.'
@@ -56,12 +58,12 @@ class InseminationReportService
         if (isset($parameters['error'])) {
             return $parameters;
         }
-
+        Log::info($parameters);
         $reportData = $this->inseminationRepository->processReport(
             $parameters,
+            $property_id,
             $startDate,
             $endDate,
-            $property_id
         );
 
         if (empty($reportData)) {

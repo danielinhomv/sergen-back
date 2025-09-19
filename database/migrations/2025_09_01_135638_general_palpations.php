@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('confirmatory_ultrasounds', function (Blueprint $table) {
+        Schema::create('general_palpations', function (Blueprint $table) {
             $table->id();
-            $table->enum('status', ['pregnant', 'empty', 'refuge', 'discart']);
+            $table->enum('status', ['pregnant', 'empty', 'discard', 'abort']);
             $table->text('observation')->nullable();
             $table->date('date');
-            $table->foreignId('bovine-controls_id')->constrained('bovine-controls')->onDelete('cascade');
+            $table->foreignId('control_bovine_id')->constrained('control_bovines')->onDelete('cascade');
         });
     }
 
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('confirmatory_ultrasounds');
+        Schema::dropIfExists('general_palpations');
     }
 };

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->text('observation')->nullable();
             $table->text('others')->nullable();
             $table->date('date');
-            $table->foreignId('bovine-controls_id')->constrained('bovine-controls')->onDelete('cascade');
+            $table->foreignId('control_bovine_id')->constrained('control_bovines')->onDelete('cascade');
             $table->foreignId('bull_id')->constrained('bulls')->onDelete('cascade');
         });
     }

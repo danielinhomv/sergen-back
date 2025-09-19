@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Pre_sincronization extends Model
+class Presincronization extends Model
 {
     public $timestamps = false;
     protected $guarded = [];

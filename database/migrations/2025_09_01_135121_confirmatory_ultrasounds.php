@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('implant_retrievals', function (Blueprint $table) {
+        Schema::create('confirmatory_ultrasounds', function (Blueprint $table) {
             $table->id();
-            $table->enum('status', ['retrieved', 'lost']);
-            $table->string('work_team')->nullable();
-            $table->text('used_products_summary')->nullable();
+            $table->enum('status', ['pregnant', 'empty', 'refuge', 'discart']);
+            $table->text('observation')->nullable();
             $table->date('date');
-            $table->foreignId('bovine-controls_id')->constrained('bovine-controls')->onDelete('cascade');
+            $table->foreignId('control_bovine_id')->constrained('control_bovines')->onDelete('cascade');
         });
     }
 
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('implant_retrievals');
+        Schema::dropIfExists('confirmatory_ultrasounds');
     }
 };

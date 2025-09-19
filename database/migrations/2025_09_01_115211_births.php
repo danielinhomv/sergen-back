@@ -18,7 +18,7 @@ return new class extends Migration
             $table->double('birth_weight');
             $table->string('rgd');
             $table->enum('type_of_birth',['premeture','abort','stillbirth']);
-            $table->foreignId('bovine-controls_id')->constrained('bovine-controls')->onDelete('cascade');
+            $table->foreignId('control_bovine_id')->constrained('control_bovines')->onDelete('cascade');
             $table->foreignId('bull_id')->constrained('bulls')->onDelete('cascade');
         });
     }
