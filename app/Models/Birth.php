@@ -14,8 +14,4 @@ class Birth extends Model
         return $this->belongsTo(Control_bovine::class);
     }
 
-    public function bull()
-    {
-        return $this->belongsTo(Bull::class);
-    }
 }

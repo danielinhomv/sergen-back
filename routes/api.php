@@ -81,6 +81,8 @@ Route::prefix('management')->group(function () {
     Route::put('/update/{id}', [PropertyController::class, 'updateProperty']);
     Route::delete('/delete/{id}', [PropertyController::class, 'deleteProperty']);
     Route::post('/name-exists', [PropertyController::class, 'nameExists']);
+    
+    
     Route::get('/{id}', [PropertyController::class, 'getPropertyById']);
     Route::post('/start-work', [PropertyController::class, 'startWork']);
     Route::post('/finish-work', [PropertyController::class, 'finishWork']);

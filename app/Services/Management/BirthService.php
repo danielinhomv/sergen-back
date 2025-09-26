@@ -75,7 +75,6 @@ class BirthService
                 'birth_weight' => $birth->birth_weigth,
                 'rgd' => $birth->rgd,
                 'type_of_birth' => $birth->type_of_birth,
-                'bull' => $birth->bull()->name
             ];
  
         } catch (\Exception $e) {
