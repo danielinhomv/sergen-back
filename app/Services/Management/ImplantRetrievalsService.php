@@ -20,12 +20,18 @@ class ImplantRetrievalsService
     public function create($request)
     {
         try {
+            $bovineControl = $this->controlBovineRepository->find($request->input('control_bovine_id'));
+
+            if (!$bovineControl) {
+                return ['error' => 'Bovine Control not found'];
+            }
 
             $implantRetrieval = $this->implantRetrievalsRepository->create($request);
 
             if (!$implantRetrieval) {
                 return ['error' => 'Failed to create Implant Retrieval'];
             }
+            
             return
                 [
                     'message' => 'Implant_retrieval created successfully',
@@ -40,7 +46,7 @@ class ImplantRetrievalsService
     public function get($request)
     {
         try {
-            $bovineControl = $this->controlBovineRepository->find($request->input('bovine-controls_id'));
+            $bovineControl = $this->controlBovineRepository->find($request->input('control_bovine_id'));
 
             if (!$bovineControl) {
                 return ['error' => 'Bovine Control not found'];
@@ -56,6 +62,7 @@ class ImplantRetrievalsService
                     'message' => 'Implant_retrieval retrieved successfully',
                     'implant_retrieval' => $this->toMapSingle($implantRetrieval)
                 ];
+
         } catch (\Exception $e) {
             return ['error' => 'Exception occurred: ' . $e->getMessage()];
         }

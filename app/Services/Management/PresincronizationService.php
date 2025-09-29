@@ -20,6 +20,11 @@ class PresincronizationService
     public function create($request)
     {
         try {
+            $bovineControl = $this->controlBovineRepository->find($request->input('control_bovine_id'));
+
+            if (!$bovineControl) {
+                return ['error' => 'Bovine Control not found'];
+            }
 
             $presincronization = $this->presincronizationRepository->create($request);
 
@@ -38,6 +43,7 @@ class PresincronizationService
 
     private function toMapSingle($presincronization)
     {
+
         try {
             return [
                 'id' => $presincronization->id,
@@ -56,13 +62,13 @@ class PresincronizationService
     {
         try {
 
-            $bovineControl = $this->controlBovineRepository->find($request->input('bovine-controls_id'));
+            $bovineControl = $this->controlBovineRepository->find($request->input('control_bovine_id'));
 
-            if ($bovineControl->isEmpty()) {
+            if (!$bovineControl) {
                 return ['error' => 'Bovine Control not found'];
             }
 
-            $presincronization = $bovineControl->pre_sincronization();
+            $presincronization = $bovineControl->pre_sincronization;
 
             if (!$presincronization) {
                 return ['error' => 'No Presincronizations found for this Bovine Control'];
@@ -71,9 +77,8 @@ class PresincronizationService
             return
                 [
                     'message' => 'presincronization retrieved successfully',
-                    'presincronizations' => $this->toMapSingle($presincronization)
+                    'presincronization' => $this->toMapSingle($presincronization)
                 ];
-
         } catch (\Exception $e) {
             return ['error' => 'Failed to retrieve Presincronizations', 'details' => $e->getMessage()];
         }
