@@ -10,5 +10,9 @@ class InseminationRepository
     {
         return Insemination::create($request->all());
     }
-    // Code for BovinRepository would go here
+    
+    public function findById($id){
+        //se buscara la inseminacion por su id
+    }
+
 }

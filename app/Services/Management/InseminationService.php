@@ -58,7 +58,7 @@ class InseminationServices
     public function all($request)
     {
         try {
-            $bovineControl = $this->controlBovineRepository->find($request->input('bovine-controls_id'));
+            $bovineControl = $this->controlBovineRepository->find($request->input('control_bovine_id'));
 
             if (!$bovineControl) {
                 return ['error' => 'Bovine Control not found'];
@@ -100,4 +100,14 @@ class InseminationServices
             'bull' => $bull()->name
         ];
     }
+
+    public function delete($request){
+        //se eliminara una inseminacion
+    }
+
+    public function update($request){
+        //se actualizara una inseminacion
+    }
+
+
 }
