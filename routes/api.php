@@ -66,6 +66,8 @@ Route::prefix('management')->group(function () {
 
     Route::post('/create', [InseminationController::class, 'create']);
     Route::get('/all', [InseminationController::class, 'all']);
+    Route::put('/update/{id}',[InseminationController::class, 'update']);
+    Route::delete('/delete',[InseminationController::class, 'delete']);
   });
 
   Route::prefix('pre-sincronizacion')->group(function () {

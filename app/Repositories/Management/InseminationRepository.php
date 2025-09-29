@@ -12,7 +12,9 @@ class InseminationRepository
     }
     
     public function findById($id){
-        //se buscara la inseminacion por su id
+
+        return Insemination::findOrFail($id);
+
     }
 
 }

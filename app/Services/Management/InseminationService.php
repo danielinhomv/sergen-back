@@ -5,7 +5,7 @@ namespace App\Services\Management;
 use App\Repositories\Management\ControlBovineRepository;
 use App\Repositories\Management\InseminationRepository;
 
-class InseminationServices
+class InseminationService
 {
 
     private ControlBovineRepository $controlBovineRepository;
@@ -21,7 +21,7 @@ class InseminationServices
     {
 
         try {
-            $bovineControl = $this->controlBovineRepository->find($request->input('bovine-controls_id'));
+            $bovineControl = $this->controlBovineRepository->find($request->input('control_bovine_id'));
 
             if (!$bovineControl) {
                 return ['error' => 'Bovine Control not found'];
@@ -32,12 +32,14 @@ class InseminationServices
             if (!$insemination) {
                 return ['error' => 'Failed to create Implant Retrieval'];
             }
+
+            $inseminations = $bovineControl->inseminations;
+
             return
                 [
                     'message' => 'insemination created successfully',
-                    'insemination' => $this->toMapSingle($insemination)
+                    'insemination' => $this->toMap($inseminations)
                 ];
-                
         } catch (\Exception $e) {
             return ['error' => 'Exception occurred: ' . $e->getMessage()];
         }
@@ -74,7 +76,6 @@ class InseminationServices
                     'message' => 'insemination retrievals successfully',
                     'insemination' => $this->toMap($inseminations)
                 ];
-
         } catch (\Exception $e) {
             return ['error' => 'Exception occurred: ' . $e->getMessage()];
         }
@@ -83,9 +84,9 @@ class InseminationServices
     private function toMapSingle($insemination)
     {
 
-        $bull = $insemination->bull();
+        $bull = $insemination->bull;
 
-        if ($bull) {
+        if (!$bull) {
             return ['error' => 'Bull not Found in Array'];
         }
 
@@ -97,17 +98,53 @@ class InseminationServices
             'observation' => $insemination->observation,
             'others' => $insemination->others,
             'date' => $insemination->date,
-            'bull' => $bull()->name
+            'bull' => $bull->name
         ];
     }
 
-    public function delete($request){
-        //se eliminara una inseminacion
+    public function delete($request)
+    {
+        try {
+
+            $insemination = $this->inseminationRepository->findById($request->input('id'));
+
+            $insemination->delete();
+
+            $bovineControl = $this->controlBovineRepository->find($request->input('control_bovine_id'));
+            $inseminations = $bovineControl->inseminations;
+
+            return [
+                'message' => 'insemination deleted successfully',
+                'insemination' => $this->toMap($inseminations)
+            ];
+        } catch (\Exception $e) {
+            return [
+                'error' => 'Exception occurred: ' . $e->getMessage()
+            ];
+        }
     }
 
-    public function update($request){
-        //se actualizara una inseminacion
+    public function update($id, $request)
+    {
+        try {
+
+            $insemination = $this->inseminationRepository->findById($id);
+
+            $insemination->update($request->all());
+
+            $bovineControl = $this->controlBovineRepository->find($request->input('control_bovine_id'));
+            
+            $inseminations = $bovineControl->inseminations;
+
+
+            return [
+                'message' => 'insemination updated successfully',
+                'insemination' => $this->toMap($inseminations)
+            ];
+        } catch (\Exception $e) {
+            return [
+                'error' => 'Exception occurred: ' . $e->getMessage()
+            ];
+        }
     }
-
-
 }
