@@ -65,7 +65,7 @@ Route::prefix('management')->group(function () {
   Route::prefix('insemination')->group(function () {
 
     Route::post('/create', [InseminationController::class, 'create']);
-    Route::get('/all', [InseminationController::class, 'all']);
+    Route::post('/all', [InseminationController::class, 'all']);
     Route::put('/update/{id}',[InseminationController::class, 'update']);
     Route::delete('/delete',[InseminationController::class, 'delete']);
   });

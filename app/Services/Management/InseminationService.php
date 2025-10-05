@@ -93,8 +93,7 @@ class InseminationService
         return [
             'id' => $insemination->id,
             'body_condition_score' => $insemination->body_condition_score,
-            'heat_quality' => $insemination->heat_cuality,
-            'protocol_details' => $insemination->protocol_details,
+            'heat_quality' => $insemination->heat_quality,
             'observation' => $insemination->observation,
             'others' => $insemination->others,
             'date' => $insemination->date,
