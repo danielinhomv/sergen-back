@@ -74,7 +74,7 @@ class PropertyController extends Controller
     {
         $currentSession = $this->propertyService->startWork($request);
         if (isset($currentSession['error'])) {
-            return response()->json(['error' => $currentSession['error']]);
+            return response()->json(['error' => $currentSession['error']],400);
         }
         return response()->json($currentSession);
     }
@@ -83,9 +83,17 @@ class PropertyController extends Controller
     {
         $currentSession = $this->propertyService->finishWork($request);
         if (isset($currentSession['error'])) {
-            return response()->json(['error' => $currentSession['error']]);
+            return response()->json(['error' => $currentSession['error']],400);
         }
         return response()->json($currentSession);
     }
     
+       public function isWorked(Request $request)
+    {
+        $isWorked = $this->propertyService->isWorked($request);
+        if (isset($isWorked['error'])) {
+            return response()->json(['error' => $isWorked['error']],400);
+        }
+        return response()->json($isWorked);
+    }
 }

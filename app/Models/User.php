@@ -50,7 +50,7 @@ class User extends Authenticatable
         return $this->hasMany(Property::class);
     }
 
-    public function current_session(){
+    public function currentSession(){
         return $this->hasOne(Current_session::class);
     }
 }

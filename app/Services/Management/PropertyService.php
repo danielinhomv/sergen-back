@@ -155,7 +155,7 @@ class PropertyService
                 ];
             }
 
-            $currentSession = $user->current_session;
+            $currentSession = $user->currentSession;
             $property_id = $request->input('property_id');
 
             if (!$currentSession) {
@@ -188,7 +188,7 @@ class PropertyService
                 ];
             }
 
-            $currentSession = $user->current_session;
+            $currentSession = $user->currentSession;
             $currentSession->update(['active' => false]);
 
             return [
@@ -197,6 +197,31 @@ class PropertyService
             ];
         } catch (\Exception $e) {
             return ['error' => 'Failed to finalized current_session', 'details' => $e->getMessage()];
+        }
+    }
+
+    public function isWorked($request)
+    {
+        try {
+            $user = $this->userRepository->find($request->input('user_id'));
+
+            if (!$user) {
+                return ['error' => 'User not found'];
+            }
+
+            $currentSession = $user->currentSession;
+
+            if ($currentSession->isActive()) {
+                return [
+                    "property_id"=>$currentSession->property_id,
+                    "active" => true
+                ];
+            }
+
+            return ["active" => false];
+            
+        } catch (\Throwable $e) {
+            return ['error' => 'Failed to verify', 'details' => $e->getMessage()];
         }
     }
 }

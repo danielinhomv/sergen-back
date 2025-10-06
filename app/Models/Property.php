@@ -23,4 +23,8 @@ class Property extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function currentSession(){
+        return $this->hasOne(Current_session::class);
+    }
 }
