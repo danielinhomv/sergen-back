@@ -72,8 +72,8 @@ class PropertyService
             DB::beginTransaction();
 
             $property = $this->propertyRepository->create($request);
-            if ($property) {
-                return ['error' => 'Failed to craeate Property'];
+            if (!$property) {
+                return ['error' => 'Property Not found'];
             }
 
             $protocolo = $this->controlService->createProtocolo($property->id);
