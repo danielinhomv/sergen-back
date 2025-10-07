@@ -70,7 +70,7 @@ class PropertyService
     {
         try {
             DB::beginTransaction();
-            
+
             $property = $this->propertyRepository->create($request);
             if ($property) {
                 return ['error' => 'Failed to craeate Property'];
@@ -89,7 +89,6 @@ class PropertyService
                     'message' => 'Property created successfully',
                     'property' => $this->toMapSingle($property)
                 ];
-                
         } catch (\Exception $e) {
             return ['error' => 'Failed to create property', 'details' => $e->getMessage()];
         }
@@ -178,26 +177,22 @@ class PropertyService
             }
 
             $currentSession = $user->currentSession;
-            
+
             $property_id = $request->input('property_id');
             $property = $this->propertyRepository->findById($property_id);
-            if(!$property){
+            if (!$property) {
                 return ['error' => 'Property not found'];
             }
             $control = $property->control;
 
-            if (!$currentSession) {
-                $currentSession = $this->propertyRepository->createCurrentSession($user_id, $property_id);
-            } else {
-                $currentSession->update([
-                    'property_id' => $property_id,
-                    'active' => true
-                ]);
-            }
+            $currentSession->update([
+                'property_id' => $property_id,
+                'active' => true
+            ]);
 
             return [
                 'message' => 'current_session start successfully',
-                'current_session' => $currentSession , 
+                'current_session' => $currentSession,
                 'protocol_id' => $control->id
             ];
         } catch (\Exception $e) {
@@ -239,11 +234,19 @@ class PropertyService
             }
 
             $currentSession = $user->currentSession;
+            
+            $property = $this->propertyRepository->findById($currentSession->property_id);
+            if (!$property) {
+                return ['error' => 'Property not found'];
+            }
+
+            $control = $property->control;
 
             if ($currentSession->isActive()) {
                 return [
                     "property_id" => $currentSession->property_id,
-                    "active" => true
+                    "active" => true,
+                    "protocol_id" => $control->id
                 ];
             }
 
