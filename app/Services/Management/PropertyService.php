@@ -4,16 +4,23 @@ namespace App\Services\Management;
 
 use App\Repositories\Management\PropertyRepository;
 use App\Repositories\Management\UserRepository;
+use Illuminate\Support\Facades\DB;
 
 class PropertyService
 {
 
     private PropertyRepository $propertyRepository;
     private UserRepository $userRepository;
-    public function __construct(PropertyRepository $propertyRepository, UserRepository $userRepository)
-    {
+    private ControlService $controlService;
+
+    public function __construct(
+        PropertyRepository $propertyRepository,
+        UserRepository $userRepository,
+        ControlService $controlService
+    ) {
         $this->propertyRepository = $propertyRepository;
         $this->userRepository = $userRepository;
+        $this->controlService = $controlService;
     }
 
     public function getAllProperties($user_id)
@@ -62,12 +69,27 @@ class PropertyService
     public function createProperty($request)
     {
         try {
-            $propertie = $this->propertyRepository->create($request);
+            DB::beginTransaction();
+            
+            $property = $this->propertyRepository->create($request);
+            if ($property) {
+                return ['error' => 'Failed to craeate Property'];
+            }
+
+            $protocolo = $this->controlService->createProtocolo($property->id);
+            if (!$protocolo) {
+                DB::rollBack();
+                return ['error' => 'Failed to create protocol'];
+            }
+
+            DB::commit();
+
             return
                 [
                     'message' => 'Property created successfully',
-                    'property' => $this->toMapSingle($propertie)
+                    'property' => $this->toMapSingle($property)
                 ];
+                
         } catch (\Exception $e) {
             return ['error' => 'Failed to create property', 'details' => $e->getMessage()];
         }
@@ -213,13 +235,12 @@ class PropertyService
 
             if ($currentSession->isActive()) {
                 return [
-                    "property_id"=>$currentSession->property_id,
+                    "property_id" => $currentSession->property_id,
                     "active" => true
                 ];
             }
 
             return ["active" => false];
-            
         } catch (\Throwable $e) {
             return ['error' => 'Failed to verify', 'details' => $e->getMessage()];
         }

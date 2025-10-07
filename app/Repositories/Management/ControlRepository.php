@@ -7,9 +7,11 @@ use App\Models\Control;
 
 class ControlRepository
 {
-    public function create($request)
+    public function create($propertyId)
     {
-        return Control::create($request->all());
+        return Control::create([
+            'property_id'=>$propertyId
+        ]);
     }
     // Code for BovinRepository would go here
 }

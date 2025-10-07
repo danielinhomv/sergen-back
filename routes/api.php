@@ -45,7 +45,7 @@ Route::prefix('management')->group(function () {
     Route::get('/all', [ConfirmatoryUltrasoundController::class, 'all']);
   });
 
-  Route::prefix('protocolo')->group(function () {
+  Route::prefix('protocol')->group(function () {
 
     Route::post('/start', [ControlController::class, 'startNewProtocol']);
   });
@@ -66,8 +66,8 @@ Route::prefix('management')->group(function () {
 
     Route::post('/create', [InseminationController::class, 'create']);
     Route::post('/all', [InseminationController::class, 'all']);
-    Route::put('/update/{id}',[InseminationController::class, 'update']);
-    Route::delete('/delete',[InseminationController::class, 'delete']);
+    Route::put('/update/{id}', [InseminationController::class, 'update']);
+    Route::delete('/delete', [InseminationController::class, 'delete']);
   });
 
   Route::prefix('pre-sincronizacion')->group(function () {
@@ -85,7 +85,7 @@ Route::prefix('management')->group(function () {
     Route::post('/name-exists', [PropertyController::class, 'nameExists']);
     Route::post('/isWorked', [PropertyController::class, 'isWorked']);
 
-    
+
     Route::get('/{id}', [PropertyController::class, 'getPropertyById']);
     Route::post('/start-work', [PropertyController::class, 'startWork']);
     Route::post('/finish-work', [PropertyController::class, 'finishWork']);

@@ -17,10 +17,10 @@ class ControlService
         $this->controlRepository = $controlRepository;
     }
 
-    private function createProtocolo($property_id)
+    public function createProtocolo($propertyId)
     {
 
-        $protocolo = $this->controlRepository->create($property_id);
+        $protocolo = $this->controlRepository->create($propertyId);
         $protocolo->save();
         return $protocolo;
     }
@@ -34,7 +34,6 @@ class ControlService
             $property = $this->propertyRepository->findById($property_id);
 
             if (!$property) {
-                DB::rollBack();
                 return ['error' => 'Property not found'];
             }
 
@@ -45,11 +44,15 @@ class ControlService
             }
 
             $protocolo = $this->createProtocolo($property_id);
+            if (!$protocolo) {
+                DB::rollBack();
+                return ['error' => 'Failed to create protocol'];
+            }
 
             DB::commit();
 
             return [
-                'message' => 'Protocolo updated successfully',
+                'message' => 'Protocolo created successfully',
                 'protocolo' => $protocolo
             ];
         } catch (\Exception $e) {
