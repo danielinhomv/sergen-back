@@ -178,7 +178,13 @@ class PropertyService
             }
 
             $currentSession = $user->currentSession;
+            
             $property_id = $request->input('property_id');
+            $property = $this->propertyRepository->findById($property_id);
+            if(!$property){
+                return ['error' => 'Property not found'];
+            }
+            $control = $property->control;
 
             if (!$currentSession) {
                 $currentSession = $this->propertyRepository->createCurrentSession($user_id, $property_id);
@@ -191,7 +197,8 @@ class PropertyService
 
             return [
                 'message' => 'current_session start successfully',
-                'current_session' => $currentSession
+                'current_session' => $currentSession , 
+                'protocol_id' => $control->id
             ];
         } catch (\Exception $e) {
             return ['error' => 'Failed to start current_session', 'details' => $e->getMessage()];
