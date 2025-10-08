@@ -6,13 +6,23 @@ use App\Models\Bovine;
 
 class BovineRepository
 {
-    public function findBySerie($serie)
-    {
-        return Bovine::where('serie', $serie)->first();
-    }
 
-    public function create($request){
+    public function create($request)
+    {
         return Bovine::create($request->all());
     }
-    // Code for BovinRepository would go here
+
+    public function existSerie($serie, $propertyId)
+    {
+        return Bovine::where('property_id', $propertyId)
+            ->where('serie', $serie)
+            ->get();
+    }
+
+    public function existRgd($rgd, $propertyId)
+    {
+        return Bovine::where('property_id', $propertyId)
+            ->where('rgd', $rgd)
+            ->get();
+    }
 }
