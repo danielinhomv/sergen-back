@@ -35,4 +35,31 @@ class BovineController extends Controller
         }
         return response()->json($bovines);
     }
+
+    public function update(Request $request)
+    {
+        $bovineUpdated = $this->bovineService->update($request);
+        if (isset($bovineUpdated['error'])) {
+            return response()->json(['error' => $bovineUpdated['error']], 400);
+        }
+        return response()->json($bovineUpdated);
+    }
+
+    public function delete(Request $request)
+    {
+        $bovineDeleted = $this->bovineService->update($request);
+        if (isset($bovineDeleted['error'])) {
+            return response()->json(['error' => $bovineDeleted['error']], 400);
+        }
+        return response()->json($bovineDeleted);
+    }
+
+    public function existRgdOrSerie(Request $request)
+    {
+        $exist = $this->bovineService->existSerieOrRgd($request);
+        if (isset($exist['error'])) {
+            return response()->json(['error' => $exist['error']], 400);
+        }
+        return response()->json($exist);
+    }
 }

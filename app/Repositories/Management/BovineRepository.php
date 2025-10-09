@@ -25,4 +25,8 @@ class BovineRepository
             ->where('rgd', $rgd)
             ->get();
     }
+
+    public function findById($id){
+        return Bovine::findOrFail($id);
+    }
 }

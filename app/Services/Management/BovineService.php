@@ -103,7 +103,7 @@ class BovineService
 
             return [
                 'message' => 'Bovine created successfully',
-                'bovine' => $this->toMap($bovines)
+                'bovines' => $this->toMap($bovines)
             ];
         } catch (\Exception $e) {
             return ['error' => 'Failed to create bovine', 'details' => $e->getMessage()];
@@ -147,18 +147,68 @@ class BovineService
     public function delete($request)
     {
         try {
-            //code...
+            $bovineId = $request->input('bovine_id');
+            $bovineFinded = $this->bovineRepository->findById($bovineId);
+
+            $bovineFinded->delete();
+
+            $propertyId = $bovineFinded->property_id;
+            $bovines = $this->getBovines($propertyId);
+
+            return [
+                'message' => 'Bovine retrievals successfully',
+                'bovines' => $this->toMap($bovines)
+            ];
         } catch (\Exception $e) {
-            //throw $th;
+            return ['error' => 'Failed to delete bovine', 'details' => $e->getMessage()];
         }
     }
 
-    public function update()
+    public function update($request)
     {
         try {
-            //code...
+            $bovineId = $request->input('bovine_id');
+            $bovineFinded = $this->bovineRepository->findById($bovineId);
+
+            $propertyId = $bovineFinded->property_id;
+
+            $serie = $request->input('serie');
+            $rgd = $request->input('rgd');
+
+            if ($serie != $bovineFinded->serie) {
+                if ($this->existSerieAt($serie, $propertyId)) {
+                    return ['error' => 'serie duplicated'];
+                }
+            }
+
+            if ($rgd != $bovineFinded->rgd) {
+                if ($this->existRgdAt($rgd, $propertyId)) {
+                    return ['error' => 'rgd duplicated'];
+                }
+            }
+
+            $bovineFinded->update($request->all());
+
+            $bovines = $this->getBovines($propertyId);
+
+            return [
+                'message' => 'Bovine retrievals successfully',
+                'bovines' => $this->toMap($bovines)
+            ];
         } catch (\Exception $e) {
-            //throw $th;
+            return ['error' => 'Failed to update bovine', 'details' => $e->getMessage()];
         }
+    }
+
+    private function existSerieAt($valor, $propertyId)
+    {
+        $bovine = $this->bovineRepository->existSerie($valor, $propertyId);
+        return $bovine != null;
+    }
+
+    private function existRgdAt($valor, $propertyId)
+    {
+        $bovine = $this->bovineRepository->existRgd($valor, $propertyId);
+        return $bovine != null;
     }
 }

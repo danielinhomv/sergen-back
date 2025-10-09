@@ -19,7 +19,7 @@ return new class extends Migration
             $table->enum('sex', ['male', 'female']);
             $table->double('weight');
             $table->date('birthdate');
-            $table->foreign('mother_id')->references('id')->on('bovines');
+            $table->foreign('mother_id')->references('id')->on('bovines'); //activar eliminacion en cascada
             $table->foreignId('property_id')->constrained('properties')->onDelete('cascade');
         });
     }
