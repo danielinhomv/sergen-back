@@ -4,6 +4,7 @@ namespace App\Services\Management;
 
 use App\Repositories\Management\BovineRepository;
 use App\Repositories\Management\PropertyRepository;
+use Exception;
 use Illuminate\Support\Facades\DB;
 
 class BovineService
@@ -37,22 +38,15 @@ class BovineService
     private function validarProperty($propertyId)
     {
         $property = $this->propertyRepository->findById($propertyId);
-
-        if (!$property) {
-            return ['error' => 'Property not found'];
-        }
         return $property;
     }
 
     private function toMap($bovines)
     {
-        try {
             return $bovines->map(function ($bovine) {
                 return $this->toMapSingle($bovine);
             });
-        } catch (\Exception $e) {
-            return ['error' => 'Exception occurred: ' . $e->getMessage()];
-        }
+
     }
 
     private function toMapSingle($bovine)
@@ -69,7 +63,7 @@ class BovineService
                 'mother_rgd' => $motherRgd
             ];
         } catch (\Exception $e) {
-            return ['error' => 'Exception occurred: ' . $e->getMessage()];
+            throw new Exception("error to map bovine");
         }
     }
 

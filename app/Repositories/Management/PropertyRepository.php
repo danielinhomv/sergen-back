@@ -9,7 +9,7 @@ class PropertyRepository
 {
     public function findById($id)
     {
-        return Property::find($id);
+        return Property::findOrFail($id);
     }
 
     public function findByUserId($user_id)

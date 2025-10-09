@@ -4,6 +4,7 @@ namespace App\Services\Management;
 
 use App\Repositories\Management\PropertyRepository;
 use App\Repositories\Management\UserRepository;
+use Exception;
 use Illuminate\Support\Facades\DB;
 
 class PropertyService
@@ -48,7 +49,7 @@ class PropertyService
                 return $this->toMapSingle($property);
             });
         } catch (\Exception $e) {
-            return ['error' => 'Exception occurred: ' . $e->getMessage()];
+           throw new Exception("error to map properties");
         }
     }
 
@@ -234,7 +235,7 @@ class PropertyService
             }
 
             $currentSession = $user->currentSession;
-            
+
             $property = $this->propertyRepository->findById($currentSession->property_id);
             if (!$property) {
                 return ['error' => 'Property not found'];
