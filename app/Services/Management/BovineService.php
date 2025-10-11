@@ -70,7 +70,6 @@ class BovineService
     public function create($request)
     {
         try {
-            DB::beginTransaction();
 
             $serie = $request->input('serie');
             $rgd = $request->input('rgd');
@@ -141,7 +140,7 @@ class BovineService
     public function delete($request)
     {
         try {
-            $bovineId = $request->input('bovine_id');
+            $bovineId = $request->input('id');
             $bovineFinded = $this->bovineRepository->findById($bovineId);
 
             $bovineFinded->delete();
@@ -161,7 +160,7 @@ class BovineService
     public function update($request)
     {
         try {
-            $bovineId = $request->input('bovine_id');
+            $bovineId = $request->input('id');
             $bovineFinded = $this->bovineRepository->findById($bovineId);
 
             $propertyId = $bovineFinded->property_id;
@@ -169,13 +168,13 @@ class BovineService
             $serie = $request->input('serie');
             $rgd = $request->input('rgd');
 
-            if ($serie != $bovineFinded->serie) {
+            if ($serie && $serie != $bovineFinded->serie) {
                 if ($this->existSerieAt($serie, $propertyId)) {
                     return ['error' => 'serie duplicated'];
                 }
             }
 
-            if ($rgd != $bovineFinded->rgd) {
+            if ($rgd && $rgd != $bovineFinded->rgd) {
                 if ($this->existRgdAt($rgd, $propertyId)) {
                     return ['error' => 'rgd duplicated'];
                 }

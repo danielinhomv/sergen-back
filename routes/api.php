@@ -29,7 +29,10 @@ Route::prefix('management')->group(function () {
   Route::prefix('bovine')->group(function () {
 
     Route::post('/create', [BovineController::class, 'create']);   // crear bovino
-    Route::get('/all', [BovineController::class, 'all']);
+    Route::post('/all',  [BovineController::class, 'all']);
+    Route::post('/update', [BovineController::class , 'update']);
+    Route::post('/delete', [BovineController::class , 'delete']);
+    
   });
 
   Route::prefix('bull')->group(function () {

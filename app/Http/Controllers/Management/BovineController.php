@@ -20,7 +20,9 @@ class BovineController extends Controller
         $createResponse = $this->bovineService->create($request);
 
         if (isset($createResponse['error'])) {
-            return response()->json(['error' => $createResponse['error']], 400);
+            return response()->json([
+                'error' => $createResponse['error'],
+            ], 400);
         }
 
         return response()->json($createResponse);
@@ -40,14 +42,16 @@ class BovineController extends Controller
     {
         $bovineUpdated = $this->bovineService->update($request);
         if (isset($bovineUpdated['error'])) {
-            return response()->json(['error' => $bovineUpdated['error']], 400);
+            return response()->json([
+                'error' => $bovineUpdated['error'],
+            ], 400);
         }
         return response()->json($bovineUpdated);
     }
 
     public function delete(Request $request)
     {
-        $bovineDeleted = $this->bovineService->update($request);
+        $bovineDeleted = $this->bovineService->delete($request);
         if (isset($bovineDeleted['error'])) {
             return response()->json(['error' => $bovineDeleted['error']], 400);
         }

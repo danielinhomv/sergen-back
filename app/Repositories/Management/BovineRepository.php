@@ -16,17 +16,19 @@ class BovineRepository
     {
         return Bovine::where('property_id', $propertyId)
             ->where('serie', $serie)
-            ->get();
+            ->first();
     }
 
     public function existRgd($rgd, $propertyId)
     {
         return Bovine::where('property_id', $propertyId)
             ->where('rgd', $rgd)
-            ->get();
+            ->first();
     }
 
-    public function findById($id){
+    public function findById($id)
+    {
         return Bovine::findOrFail($id);
     }
+
 }
