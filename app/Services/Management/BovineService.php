@@ -24,7 +24,7 @@ class BovineService
         return
             [
                 'message' => 'Bovine retrievals successfully',
-                'bovine' => $this->toMap($bovines)
+                'bovines' => $this->toMap($bovines)
             ];
     }
 
@@ -52,7 +52,7 @@ class BovineService
     private function toMapSingle($bovine)
     {
         try {
-            $motherRgd = $bovine->mother ? $bovine->mother->rgd : null;
+            $motherRgd = $bovine->bovineMother ? $bovine->bovineMother->rgd : null;
             return [
                 'id' => $bovine->id,
                 'serie' => $bovine->serie,
@@ -100,40 +100,6 @@ class BovineService
             ];
         } catch (\Exception $e) {
             return ['error' => 'Failed to create bovine', 'details' => $e->getMessage()];
-        }
-    }
-
-    public function existSerieOrRgd($request)
-    {
-        try {
-            $propertyId = $request->input('property_id');
-            $this->validarProperty($propertyId);
-
-            $typeIdentity = $request->input('type_identity');
-            $valor = $request->input('valor');
-            $exist = false;
-
-            if ($typeIdentity == 'serie') {
-
-                $bovine = $this->bovineRepository->existSerie($valor, $propertyId);
-                if ($bovine) {
-                    $exist = true;
-                }
-            } else {
-
-                $bovine = $this->bovineRepository->existRgd($valor, $propertyId);
-                if ($bovine) {
-                    $exist = true;
-                }
-            }
-
-            return [
-                'message' => 'Bovine find successfully',
-                'exist' => $exist,
-                'bovine' => $this->toMapSingle($bovine)
-            ];
-        } catch (\Exception $e) {
-            return ['error' => 'Failed to search bovine', 'details' => $e->getMessage()];
         }
     }
 

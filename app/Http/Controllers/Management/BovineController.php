@@ -58,12 +58,4 @@ class BovineController extends Controller
         return response()->json($bovineDeleted);
     }
 
-    public function existRgdOrSerie(Request $request)
-    {
-        $exist = $this->bovineService->existSerieOrRgd($request);
-        if (isset($exist['error'])) {
-            return response()->json(['error' => $exist['error']], 400);
-        }
-        return response()->json($exist);
-    }
 }
