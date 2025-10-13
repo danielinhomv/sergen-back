@@ -70,7 +70,7 @@ Route::prefix('management')->group(function () {
     Route::post('/create', [InseminationController::class, 'create']);
     Route::post('/all', [InseminationController::class, 'all']);
     Route::put('/update/{id}', [InseminationController::class, 'update']);
-    Route::delete('/delete', [InseminationController::class, 'delete']);
+    Route::post('/delete', [InseminationController::class, 'delete']);
   });
 
   Route::prefix('pre-sincronizacion')->group(function () {

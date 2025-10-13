@@ -109,7 +109,7 @@ class InseminationService
 
             $insemination->delete();
 
-            $bovineControl = $this->controlBovineRepository->find($request->input('control_bovine_id'));
+            $bovineControl = $this->controlBovineRepository->find($insemination->control_bovine_id);
             $inseminations = $bovineControl->inseminations;
 
             return [
@@ -131,7 +131,7 @@ class InseminationService
 
             $insemination->update($request->all());
 
-            $bovineControl = $this->controlBovineRepository->find($request->input('control_bovine_id'));
+            $bovineControl = $this->controlBovineRepository->find($insemination->control_bovine_id);
             
             $inseminations = $bovineControl->inseminations;
 
