@@ -13,5 +13,5 @@ class ControlRepository
             'property_id'=>$propertyId
         ]);
     }
-    // Code for BovinRepository would go here
+
 }
