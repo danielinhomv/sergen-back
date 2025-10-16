@@ -52,15 +52,6 @@ class PropertyController extends Controller
         return response()->json($property);
     }
 
-    public function nameExists(Request $request)
-    {
-        $exist = $this->propertyService->nameExists($request);
-        if (isset($exist['error'])) {
-            return response()->json(['error' => $exist['error']], 400);
-        }
-        return response()->json($exist);
-    }
-
     public function getPropertyById($id)
     {
         $property = $this->propertyService->getPropertyById($id);

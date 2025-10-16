@@ -53,20 +53,6 @@ class PropertyService
         }
     }
 
-    public function nameExists($request)
-    {
-        try {
-            $name = $request->input('name');
-            $user_id = $request->input('user_id');
-
-            $exists = $this->propertyRepository->exists($name, $user_id);
-
-            return ['exists' => $exists];
-        } catch (\Exception $e) {
-            return ['error' => 'Failed to check name existence', 'details' => $e->getMessage()];
-        }
-    }
-
     public function createProperty($request)
     {
         try {
