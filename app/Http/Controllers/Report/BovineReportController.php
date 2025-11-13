@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Report;
 
 use App\Http\Controllers\Controller;
-use BovineReportService;
+use App\Services\Report\BovineReportService;
 use Illuminate\Http\Request;
 
 class BovineReportController extends Controller

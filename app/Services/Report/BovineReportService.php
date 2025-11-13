@@ -1,5 +1,9 @@
 <?php
 
+namespace App\Services\Report;
+
+use App\Repositories\Report\BovineReportRepository;
+
 class BovineReportService
 {
     protected $bovineReportRepository;

@@ -1,12 +1,14 @@
 <?php
 
+namespace App\Repositories\Report;
+
 use App\Models\Bovine;
 use App\Models\Property;
 
 class BovineReportRepository
 {
 
-    public function generateBovineHistoryReport($bovine_id,$property_id)
+    public function generateBovineHistoryReport($bovine_id, $property_id)
     {
         $property = Property::find($property_id);
         if (!$property) {
@@ -23,22 +25,23 @@ class BovineReportRepository
             return ['error' => 'No hay un control asociado a esta propiedad.'];
         }
 
-        $control_bovine = $control->control_bovines()
+        $controlBovine = $control->control_bovines()
                          ->where('bovine_id', $bovine_id)
                          ->where('control_id', $control->id)
                          ->first();
-        if (!$control_bovine) {
+        if (!$controlBovine) {
             return ['error' => 'El bovino no está asociado al control de esta propiedad.'];
         }
         
         $history = [];
 
-        $history['inseminations'] = $control_bovine->inseminations->get();
-        $history['ultrasound'] = $control_bovine->ultrasound->get();
-        $history['pre_sincronization'] = $control_bovine->pre_sincronization->get();
-        $history['implant_retrieval'] = $control_bovine->implant_retrieval->get();
-        $history['general_palpation'] = $control_bovine->general_palpation->get();
-        $history['confirmatory_ultrasounds'] = $control_bovine->confirmatory_ultrasounds->get();
+        $history['inseminations'] = $controlBovine->inseminations;
+        $history['ultrasound'] = $controlBovine->ultrasound;
+        $history['pre_sincronization'] = $controlBovine->pre_sincronization;
+        $history['implant_retrieval'] = $controlBovine->implant_retrieval;
+        $history['general_palpation'] = $controlBovine->general_palpation;
+        $history['confirmatory_ultrasounds'] = $controlBovine->confirmatory_ultrasounds;
+        
         
         return $history;
     }
@@ -60,12 +63,14 @@ class BovineReportRepository
         foreach ($control->control_bovines as $control_bovine) {
             $bovineHistory = [];
             $bovineHistory['bovine_id'] = $control_bovine->bovine_id;
-            $bovineHistory['inseminations'] = $control_bovine->inseminations->get();
-            $bovineHistory['ultrasound'] = $control_bovine->ultrasound->get();
-            $bovineHistory['pre_sincronization'] = $control_bovine->pre_sincronization->get();
-            $bovineHistory['implant_retrieval'] = $control_bovine->implant_retrieval->get();
-            $bovineHistory['general_palpation'] = $control_bovine->general_palpation->get();
-            $bovineHistory['confirmatory_ultrasounds'] = $control_bovine->confirmatory_ultrasounds->get();
+            
+            // CORRECCIÓN: Removido ->get()
+            $bovineHistory['inseminations'] = $control_bovine->inseminations;
+            $bovineHistory['ultrasound'] = $control_bovine->ultrasound;
+            $bovineHistory['pre_sincronization'] = $control_bovine->pre_sincronization;
+            $bovineHistory['implant_retrieval'] = $control_bovine->implant_retrieval;
+            $bovineHistory['general_palpation'] = $control_bovine->general_palpation;
+            $bovineHistory['confirmatory_ultrasounds'] = $control_bovine->confirmatory_ultrasounds;
 
             $history[] = $bovineHistory;
         }

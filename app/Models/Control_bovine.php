@@ -16,7 +16,7 @@ class Control_bovine extends Model
 
     public function general_palpation()
     {
-        return $this->hasOne(general_palpation::class);
+        return $this->hasOne(General_palpation::class);
     }
 
     public function implant_retrieval()
