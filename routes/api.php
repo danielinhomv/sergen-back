@@ -12,6 +12,7 @@ use App\Http\Controllers\Management\InseminationController;
 use App\Http\Controllers\Management\PresincronizationController;
 use App\Http\Controllers\Management\PropertyController;
 use App\Http\Controllers\Management\UltrasoundController;
+use App\Http\Controllers\Report\BovineReportController;
 use App\Http\Controllers\Report\InseminationReportController;
 use App\Http\Controllers\ReportController;
 use Illuminate\Http\Request;
@@ -95,14 +96,16 @@ Route::prefix('management')->group(function () {
 
   Route::prefix('ultrasound')->group(function () {
 
-    Route::post('/create', [UltrasoundController::class, 'create']); // registrar ecografía
+    Route::post('/create', [UltrasoundController::class, 'create']);
     Route::get('/get', [UltrasoundController::class, 'get']);
   });
 });
 
 Route::prefix('report')->group(function () {
 
-  Route::post('/insemination', [InseminationReportController::class, 'getInseminationReport']); // generar reporte de inseminación
+  Route::post('/insemination', [InseminationReportController::class, 'getInseminationReport']);
+  Route::post('/bovine-history', [BovineReportController::class, 'generateBovineHistoryReport']);
+  Route::post('/property-bovine-history', [BovineReportController::class, 'generatePropertyBovineHistoryReport']);
 
 });
 

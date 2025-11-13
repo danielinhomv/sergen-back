@@ -71,10 +71,10 @@ class DatabaseSeeder extends Seeder
 //         ]);
 
         // Crear relación control_bovine
-        //$controlBovine1 = Control_bovine::create([
-            //'bovine_id' => 7,
-          //  'control_id' => 16,
-        //]);
+        $controlBovine1 = Control_bovine::create([
+            'bovine_id' => 7,
+           'control_id' => 18,
+        ]);
 
         // $controlBovine2 = Control_bovine::create([
         //     'bovine_id' => $bovine2->id,
@@ -82,10 +82,10 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         // // Crear algunos toros (Bull) para inseminaciones
-         $bull1 = Bull::create([
-             'name' => 'Toro A',
-             'user_id' => 1,
-         ]);
+        //  $bull1 = Bull::create([
+        //      'name' => 'Toro A',
+        //      'user_id' => 1,
+        //  ]);
 
         // $bull2 = Bull::create([
         //     'name' => 'Toro B',
