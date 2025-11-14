@@ -49,7 +49,7 @@ class PropertyService
                 return $this->toMapSingle($property);
             });
         } catch (\Exception $e) {
-           throw new Exception("error to map properties");
+            throw new Exception("error to map properties");
         }
     }
 
@@ -172,8 +172,17 @@ class PropertyService
             }
             $control = $property->control;
 
+            $name = $property->name;
+            $place = $property->place;
+            $phone_number = $property->phone_number;
+            $owner_name = $property->owner_name;
+
             $currentSession->update([
                 'property_id' => $property_id,
+                'name' => $name,
+                'place' => $place,
+                'phone_number' => $phone_number,    
+                'owner_name' => $owner_name,    
                 'active' => true
             ]);
 
@@ -227,11 +236,20 @@ class PropertyService
                 return ['error' => 'Property not found'];
             }
 
+            $name = $property->name;
+            $place = $property->place;
+            $phone_number = $property->phone_number;
+            $owner_name = $property->owner_name;
+
             $control = $property->control;
 
             if ($currentSession->isActive()) {
                 return [
                     "property_id" => $currentSession->property_id,
+                    "name" => $name,
+                    "place" => $place,
+                    "phone_number" => $phone_number,
+                    "owner_name" => $owner_name,
                     "active" => true,
                     "protocol_id" => $control->id
                 ];

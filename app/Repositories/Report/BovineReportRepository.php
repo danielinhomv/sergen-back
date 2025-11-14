@@ -35,17 +35,31 @@ class BovineReportRepository
         
         $history = [];
 
-        $history['inseminations'] = $controlBovine->inseminations;
+        $history['inseminations'] = $this->toMapInsemination($controlBovine->inseminations);
         $history['ultrasound'] = $controlBovine->ultrasound;
         $history['pre_sincronization'] = $controlBovine->pre_sincronization;
         $history['implant_retrieval'] = $controlBovine->implant_retrieval;
         $history['general_palpation'] = $controlBovine->general_palpation;
         $history['confirmatory_ultrasounds'] = $controlBovine->confirmatory_ultrasounds;
-        
+        $history['births'] = $controlBovine->births;
         
         return $history;
     }
-
+    public function toMapInsemination($inseminations)
+    {
+        return $inseminations->map(function ($insemination) {
+            $bull = $insemination->bull;
+            return [
+                'id' => $insemination->id,
+                'body_condition_score' => $insemination->body_condition_score,
+                'heat_quality' => $insemination->heat_quality,
+                'observation' => $insemination->observation,
+                'others' => $insemination->others,
+                'date' => $insemination->date,
+                'bull' => $bull->name,
+            ];
+        });
+    }
     public function generatePropertyBovineHistoryReport($property_id)
     {
         $property = Property::find($property_id);
@@ -62,9 +76,13 @@ class BovineReportRepository
 
         foreach ($control->control_bovines as $control_bovine) {
             $bovineHistory = [];
-            $bovineHistory['bovine_id'] = $control_bovine->bovine_id;
+            $bovine = Bovine::find($control_bovine->bovine_id);
+
+            if (!$bovine) {
+                continue; 
+            }
+            $bovineHistory['bovine_rgd'] = $bovine->rgd; 
             
-            // CORRECCIÓN: Removido ->get()
             $bovineHistory['inseminations'] = $control_bovine->inseminations;
             $bovineHistory['ultrasound'] = $control_bovine->ultrasound;
             $bovineHistory['pre_sincronization'] = $control_bovine->pre_sincronization;
