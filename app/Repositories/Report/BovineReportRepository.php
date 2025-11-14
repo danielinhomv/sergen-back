@@ -10,40 +10,44 @@ class BovineReportRepository
 
     public function generateBovineHistoryReport($bovine_id, $property_id)
     {
-        $property = Property::find($property_id);
-        if (!$property) {
-            return ['error' => 'Propiedad no encontrada.'];
-        }
-        
-        $bovine = Bovine::find($bovine_id);
-        if (!$bovine) {
-            return ['error' => 'Bovino no encontrado.'];
-        }
+        try {
+            $property = Property::find($property_id);
+            if (!$property) {
+                return ['error' => 'Propiedad no encontrada.'];
+            }
 
-        $control = $property->control;
-        if (!$control) {
-            return ['error' => 'No hay un control asociado a esta propiedad.'];
-        }
+            $bovine = Bovine::find($bovine_id);
+            if (!$bovine) {
+                return ['error' => 'Bovino no encontrado.'];
+            }
 
-        $controlBovine = $control->control_bovines()
-                         ->where('bovine_id', $bovine_id)
-                         ->where('control_id', $control->id)
-                         ->first();
-        if (!$controlBovine) {
-            return ['error' => 'El bovino no está asociado al control de esta propiedad.'];
-        }
-        
-        $history = [];
+            $control = $property->control;
+            if (!$control) {
+                return ['error' => 'No hay un control asociado a esta propiedad.'];
+            }
 
-        $history['inseminations'] = $this->toMapInsemination($controlBovine->inseminations);
-        $history['ultrasound'] = $controlBovine->ultrasound;
-        $history['pre_sincronization'] = $controlBovine->pre_sincronization;
-        $history['implant_retrieval'] = $controlBovine->implant_retrieval;
-        $history['general_palpation'] = $controlBovine->general_palpation;
-        $history['confirmatory_ultrasounds'] = $controlBovine->confirmatory_ultrasounds;
-        $history['births'] = $controlBovine->births;
-        
-        return $history;
+            $controlBovine = $control->control_bovines()
+                ->where('bovine_id', $bovine_id)
+                ->where('control_id', $control->id)
+                ->first();
+            if (!$controlBovine) {
+                return ['error' => 'El bovino no está asociado al control de esta propiedad.'];
+            }
+
+            $history = [];
+
+            $history['inseminations'] = $this->toMapInsemination($controlBovine->inseminations);
+            $history['ultrasound'] = $controlBovine->ultrasound;
+            $history['pre_sincronization'] = $controlBovine->pre_sincronization;
+            $history['implant_retrieval'] = $controlBovine->implant_retrieval;
+            $history['general_palpation'] = $controlBovine->general_palpation;
+            $history['confirmatory_ultrasounds'] = $controlBovine->confirmatory_ultrasounds;
+            $history['births'] = $controlBovine->births;
+
+            return $history;
+        } catch (\Throwable $e) {
+            return ['error' => 'Error al generar el informe: ' . $e->getMessage()];
+        }
     }
     public function toMapInsemination($inseminations)
     {
@@ -62,38 +66,42 @@ class BovineReportRepository
     }
     public function generatePropertyBovineHistoryReport($property_id)
     {
-        $property = Property::find($property_id);
-        if (!$property) {
-            return ['error' => 'Propiedad no encontrada.'];
-        }
-
-        $control = $property->control;
-        if (!$control) {
-            return ['error' => 'No hay un control asociado a esta propiedad.'];
-        }
-
-        $history = [];
-
-        foreach ($control->control_bovines as $control_bovine) {
-            $bovineHistory = [];
-            $bovine = Bovine::find($control_bovine->bovine_id);
-
-            if (!$bovine) {
-                continue; 
+        try {
+            $property = Property::find($property_id);
+            if (!$property) {
+                return ['error' => 'Propiedad no encontrada.'];
             }
-            $bovineHistory['bovine_rgd'] = $bovine->rgd; 
-            
-            $bovineHistory['inseminations'] = $control_bovine->inseminations;
-            $bovineHistory['ultrasound'] = $control_bovine->ultrasound;
-            $bovineHistory['pre_sincronization'] = $control_bovine->pre_sincronization;
-            $bovineHistory['implant_retrieval'] = $control_bovine->implant_retrieval;
-            $bovineHistory['general_palpation'] = $control_bovine->general_palpation;
-            $bovineHistory['confirmatory_ultrasounds'] = $control_bovine->confirmatory_ultrasounds;
 
-            $history[] = $bovineHistory;
+            $control = $property->control;
+            if (!$control) {
+                return ['error' => 'No hay un control asociado a esta propiedad.'];
+            }
+
+            $history = [];
+
+            foreach ($control->control_bovines as $control_bovine) {
+                $bovineHistory = [];
+                $bovine = Bovine::find($control_bovine->bovine_id);
+
+                if (!$bovine) {
+                    continue;
+                }
+                $bovineHistory['bovine_rgd'] = $bovine->rgd;
+
+                $bovineHistory['inseminations'] = $this->toMapInsemination($control_bovine->inseminations);
+                $bovineHistory['ultrasound'] = $control_bovine->ultrasound;
+                $bovineHistory['pre_sincronization'] = $control_bovine->pre_sincronization;
+                $bovineHistory['implant_retrieval'] = $control_bovine->implant_retrieval;
+                $bovineHistory['general_palpation'] = $control_bovine->general_palpation;
+                $bovineHistory['confirmatory_ultrasounds'] = $control_bovine->confirmatory_ultrasounds;
+                $bovineHistory['births'] = $control_bovine->births;
+
+                $history[] = $bovineHistory;
+            }
+
+            return $history;
+        } catch (\Throwable $e) {
+            return ['error' => 'Error al generar el informe: ' . $e->getMessage()];
         }
-
-        return $history;
     }
-
 }
