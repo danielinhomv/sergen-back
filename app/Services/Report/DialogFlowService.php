@@ -108,10 +108,11 @@ class DialogFlowService
                     ]
                 ]
             ]);
-
+            Log::info('Dialogflow response--------------------------------');
             $dialogflowResult = $response->json();
             Log::info($dialogflowResult);
             $parameters = $dialogflowResult['queryResult']['parameters'] ?? [];
+            Log::info('Dialogflow parametros--------------------------------');
             Log::info($parameters);
             return $parameters;
         } catch (\Exception $e) {

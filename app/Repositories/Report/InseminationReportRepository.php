@@ -10,10 +10,10 @@ use Illuminate\Support\Facades\Log;
 class InseminationReportRepository
 {
     private array $reportMap = [
-        'calidad_celo' => ['column' => 'heat_quality', 'type' => 'enum'],
+        'heat_quality' => ['column' => 'heat_quality', 'type' => 'enum'],
         'body_condition_score' => ['column' => 'body_condition_score', 'type' => 'numeric'],
-        'observacion' => ['column' => 'observation', 'type' => 'text'],
-        'otros' => ['column' => 'others', 'type' => 'text'],
+        'observation' => ['column' => 'observation', 'type' => 'text'],
+        'others' => ['column' => 'others', 'type' => 'text'],
     ];
 
     private array $heatQualityMap = [
@@ -56,7 +56,6 @@ class InseminationReportRepository
             return $query->get()->toArray();
         }
         Log::info('query---------------');
-        Log::info($query->get()->toArray());
 
         Log::info('entrando al foreach...............');
         // Procesa cada parámetro
@@ -74,6 +73,7 @@ class InseminationReportRepository
             $dataType = $this->reportMap[$type]['type'];
             Log::info($columnName);
             Log::info($dataType);
+
 
             foreach ($values as $value) {
                 if ($dataType === 'numeric') {
@@ -118,6 +118,7 @@ class InseminationReportRepository
                     }
                 }
             }
+            break; // Solo procesa el primer parámetro que tiene asignado un valor 
         }
         if ($startDate && $endDate) {
             $query->whereBetween('date', [$startDate, $endDate]);

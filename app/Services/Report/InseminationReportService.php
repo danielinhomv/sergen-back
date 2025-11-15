@@ -58,7 +58,7 @@ class InseminationReportService
         if (isset($parameters['error'])) {
             return $parameters;
         }
-        Log::info($parameters);
+        Log::info('entrando al repositorio-----------------------------');
         $reportData = $this->inseminationRepository->processReport(
             $parameters,
             $property_id,
