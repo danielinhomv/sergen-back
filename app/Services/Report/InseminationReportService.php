@@ -71,11 +71,6 @@ class InseminationReportService
             $endDate,
         );
 
-        if (empty($reportData)) {
-            return [
-                'error' => 'No se encontraron datos para los criterios especificados.'
-            ];
-        }
         
         $reportData = array_map(function ($item) {
             if (isset($item['bull_id'])) {
