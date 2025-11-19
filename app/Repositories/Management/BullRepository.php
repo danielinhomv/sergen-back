@@ -17,4 +17,9 @@ class BullRepository
     {
         return Bull::create($request->all());
     }
+
+    public function getById($id)
+    {
+        return Bull::find($id);
+    }
 }

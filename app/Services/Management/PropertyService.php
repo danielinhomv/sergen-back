@@ -179,17 +179,17 @@ class PropertyService
 
             $currentSession->update([
                 'property_id' => $property_id,
-                'name' => $name,
-                'place' => $place,
-                'phone_number' => $phone_number,    
-                'owner_name' => $owner_name,    
                 'active' => true
             ]);
 
             return [
                 'message' => 'current_session start successfully',
                 'current_session' => $currentSession,
-                'protocol_id' => $control->id
+                'protocol_id' => $control->id,
+                'name' => $name,
+                'place' => $place,
+                'phone_number' => $phone_number,
+                'owner_name' => $owner_name,
             ];
         } catch (\Exception $e) {
             return ['error' => 'Failed to start current_session', 'details' => $e->getMessage()];

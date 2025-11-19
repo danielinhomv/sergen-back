@@ -2,6 +2,8 @@
 
 namespace App\Services\Report;
 
+use App\Models\Bull;
+use App\Repositories\Management\BullRepository;
 use App\Repositories\Report\InseminationReportRepository;
 use App\Services\Report\DialogFlowService;
 use Illuminate\Http\Request;
@@ -11,15 +13,18 @@ use PgSql\Lob;
 class InseminationReportService
 {
     private InseminationReportRepository $inseminationRepository;
-    private string $sessionId; 
+    private BullRepository $bullRepository;
+    private string $sessionId;
     private DialogFlowService $dialogFlowService;
 
     public function __construct(
         InseminationReportRepository $inseminationRepository,
-        DialogFlowService $dialogFlowService
+        DialogFlowService $dialogFlowService,
+        BullRepository $bullRepository
     ) {
         $this->dialogFlowService = $dialogFlowService;
         $this->inseminationRepository = $inseminationRepository;
+        $this->bullRepository = $bullRepository;
     }
 
     public function generateReport($request): array
@@ -36,7 +41,6 @@ class InseminationReportService
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
         $userId = $request->input('user_id');
-
 
         $this->sessionId = $userId ?? 'default_session';
 
@@ -58,6 +62,7 @@ class InseminationReportService
         if (isset($parameters['error'])) {
             return $parameters;
         }
+
         Log::info('entrando al repositorio-----------------------------');
         $reportData = $this->inseminationRepository->processReport(
             $parameters,
@@ -71,6 +76,24 @@ class InseminationReportService
                 'error' => 'No se encontraron datos para los criterios especificados.'
             ];
         }
+        
+        $reportData = array_map(function ($item) {
+            if (isset($item['bull_id'])) {
+               
+                $bull = $this->bullRepository->getById($item['bull_id']);
+
+                if ($bull) {
+                    $item['bull'] = $bull->name;
+                } else {
+                    $item['bull'] = null;
+                }
+                unset($item['bull_id']);
+            }
+
+            return $item;
+        }, $reportData);
+
         return $reportData;
     }
+    
 }

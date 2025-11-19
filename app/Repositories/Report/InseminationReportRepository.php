@@ -12,8 +12,8 @@ class InseminationReportRepository
     private array $reportMap = [
         'heat_quality' => ['column' => 'heat_quality', 'type' => 'enum'],
         'body_condition_score' => ['column' => 'body_condition_score', 'type' => 'numeric'],
-        'observation' => ['column' => 'observation', 'type' => 'text'],
-        'others' => ['column' => 'others', 'type' => 'text'],
+        'observation' => ['column' => 'observation', 'type' => 'text_observation'],
+        'others' => ['column' => 'others', 'type' => 'text_others'],
     ];
 
     private array $heatQualityMap = [
@@ -81,38 +81,39 @@ class InseminationReportRepository
                     Log::info('el tipo de dato es numerico');
 
                     preg_match('/^(>=|>|!=|<)(.*)/', $value, $matches);
-                    
+
                     if (count($matches) > 0) {
                         Log::info('es mayor que cero la cantidad de operadores');
-                        
+
                         $operator = $matches[1];
-                        
+
                         Log::info($operator);
-                        
+
                         $cleanValue = (float) str_replace(',', '.', $matches[2]);
-                        
+
                         Log::info($cleanValue);
-                    
                     } else {
                         $operator = '>=';
                         $cleanValue = (float) str_replace(',', '.', $value);
                     }
-                    
+
                     $query->where($columnName, $operator, $cleanValue);
-                    
+
                     Log::info($query->get()->toArray());
-                
-                } elseif ($dataType === 'text') {
-                
+                } elseif ($dataType === 'text_observation') {
+
                     Log::info('es texto');
                     $query->whereNotNull($columnName);
-                
+                } elseif ($dataType === 'text_others') {
+
+                    Log::info('es texto otros');
+                    $query->whereNotNull($columnName);
                 } elseif ($dataType === 'enum') {
-                
+
                     Log::info('es enum');
-                
+
                     $cleanValue = $this->heatQualityMap[$value] ?? null;
-                
+
                     if ($cleanValue) {
                         $query->where($columnName, $cleanValue);
                     }
