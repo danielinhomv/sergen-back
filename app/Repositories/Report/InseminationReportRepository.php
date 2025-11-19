@@ -51,84 +51,102 @@ class InseminationReportRepository
             $q->where('control_id', $protocolo_id);
         });
 
-        // Si no hay parámetros, devuelve todo
-        if (empty($parameters)) {
+        Log::info('Parámetros recibidos:', $parameters);
+
+        // Filtrar solo los parámetros que tienen valor (no vacíos)
+        $validParameters = array_filter($parameters, function($value) {
+            return $value !== '' && $value !== null;
+        });
+
+        Log::info('Parámetros válidos (con valor):', $validParameters);
+
+        // Si no hay parámetros válidos, devuelve todo con filtro de fechas
+        if (empty($validParameters)) {
+            Log::info('No hay parámetros válidos, devolviendo todos los registros');
+            
+            if ($startDate && $endDate) {
+                $query->whereBetween('date', [$startDate, $endDate]);
+            } elseif ($startDate) {
+                $query->whereDate('date', '>=', $startDate);
+            } elseif ($endDate) {
+                $query->whereDate('date', '<=', $endDate);
+            }
+            
             return $query->get()->toArray();
         }
-        Log::info('query---------------');
 
-        Log::info('entrando al foreach...............');
-        // Procesa cada parámetro
-        foreach ($parameters as $type => $values) {
-            // Normaliza: si viene como string, conviértelo a array
-            if (!is_array($values)) {
-                $values = [$values];
-            }
-
+        // Procesar solo el primer parámetro válido (el que tiene valor)
+        foreach ($validParameters as $type => $value) {
+            
             if (!array_key_exists($type, $this->reportMap)) {
-                continue; // ignora parámetros desconocidos
+                Log::info("Parámetro desconocido: {$type}");
+                continue;
             }
 
             $columnName = $this->reportMap[$type]['column'];
             $dataType = $this->reportMap[$type]['type'];
-            Log::info($columnName);
-            Log::info($dataType);
+            
+            Log::info("Procesando parámetro: {$type}");
+            Log::info("Columna: {$columnName}, Tipo: {$dataType}, Valor: {$value}");
 
+            if ($dataType === 'numeric') {
+                Log::info('Tipo de dato: numérico');
 
-            foreach ($values as $value) {
-                if ($dataType === 'numeric') {
-                    // Extrae operador y valor
-                    Log::info('el tipo de dato es numerico');
+                // Extrae operador y valor
+                preg_match('/^(>=|>|!=|<)(.*)/', $value, $matches);
 
-                    preg_match('/^(>=|>|!=|<)(.*)/', $value, $matches);
+                if (count($matches) > 0) {
+                    $operator = $matches[1];
+                    $cleanValue = (float) str_replace(',', '.', $matches[2]);
+                    Log::info("Operador encontrado: {$operator}, Valor: {$cleanValue}");
+                } else {
+                    $operator = '>=';
+                    $cleanValue = (float) str_replace(',', '.', $value);
+                    Log::info("Sin operador, usando por defecto >=, Valor: {$cleanValue}");
+                }
 
-                    if (count($matches) > 0) {
-                        Log::info('es mayor que cero la cantidad de operadores');
+                $query->where($columnName, $operator, $cleanValue);
 
-                        $operator = $matches[1];
+            } elseif ($dataType === 'text_observation') {
+                Log::info('Tipo de dato: texto observación');
+                $query->whereNotNull($columnName);
 
-                        Log::info($operator);
+            } elseif ($dataType === 'text_others') {
+                Log::info('Tipo de dato: texto otros');
+                $query->whereNotNull($columnName);
 
-                        $cleanValue = (float) str_replace(',', '.', $matches[2]);
+            } elseif ($dataType === 'enum') {
+                Log::info('Tipo de dato: enum');
 
-                        Log::info($cleanValue);
-                    } else {
-                        $operator = '>=';
-                        $cleanValue = (float) str_replace(',', '.', $value);
-                    }
+                $cleanValue = $this->heatQualityMap[$value] ?? null;
+                Log::info("Valor mapeado: {$cleanValue}");
 
-                    $query->where($columnName, $operator, $cleanValue);
-
-                    Log::info($query->get()->toArray());
-                } elseif ($dataType === 'text_observation') {
-
-                    Log::info('es texto');
-                    $query->whereNotNull($columnName);
-                } elseif ($dataType === 'text_others') {
-
-                    Log::info('es texto otros');
-                    $query->whereNotNull($columnName);
-                } elseif ($dataType === 'enum') {
-
-                    Log::info('es enum');
-
-                    $cleanValue = $this->heatQualityMap[$value] ?? null;
-
-                    if ($cleanValue) {
-                        $query->where($columnName, $cleanValue);
-                    }
+                if ($cleanValue) {
+                    $query->where($columnName, $cleanValue);
+                } else {
+                    Log::warning("Valor enum no válido: {$value}");
                 }
             }
-            break; // Solo procesa el primer parámetro que tiene asignado un valor 
+
+            // Solo procesa el primer parámetro válido
+            break;
         }
+
+        // Aplicar filtros de fecha
         if ($startDate && $endDate) {
+            Log::info("Aplicando filtro de fechas: {$startDate} - {$endDate}");
             $query->whereBetween('date', [$startDate, $endDate]);
         } elseif ($startDate) {
+            Log::info("Aplicando filtro fecha inicio: {$startDate}");
             $query->whereDate('date', '>=', $startDate);
         } elseif ($endDate) {
+            Log::info("Aplicando filtro fecha fin: {$endDate}");
             $query->whereDate('date', '<=', $endDate);
         }
 
-        return $query->get()->toArray();
+        $results = $query->get()->toArray();
+        Log::info('Cantidad de resultados:', ['count' => count($results)]);
+
+        return $results;
     }
 }
