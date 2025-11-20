@@ -28,4 +28,8 @@ class PropertyRepository
             'active'=> true
         ]);
     }
+
+    public function getCurrentSession($id){
+        return Current_session::find($id);
+    }
 }

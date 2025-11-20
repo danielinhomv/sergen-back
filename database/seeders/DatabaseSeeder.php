@@ -13,8 +13,8 @@ class DatabaseSeeder extends Seeder
     {
         // El orden es crucial debido a las llaves foráneas
         $this->call([
-            //UserSeeder::class,
-            //PropertySeeder::class,
+            UserSeeder::class,
+            PropertySeeder::class,
             BovineSeeder::class,
             ControlAndBreedingSeeder::class,
             // Aquí puedes agregar un seeder para 'current_sessions' si lo necesitas,

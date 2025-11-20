@@ -6,6 +6,7 @@ use App\Repositories\Management\PropertyRepository;
 use App\Repositories\Management\UserRepository;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class PropertyService
 {
@@ -153,48 +154,52 @@ class PropertyService
     public function startWork($request)
     {
         try {
-            //code...
             $user_id = $request->input('user_id');
             $user = $this->userRepository->find($user_id);
 
             if (!$user) {
-                return [
-                    'error' => 'User not found'
-                ];
+                return ['error' => 'User not found'];
             }
 
+            // Buscar la current_session existente
             $currentSession = $user->currentSession;
 
             $property_id = $request->input('property_id');
             $property = $this->propertyRepository->findById($property_id);
+
             if (!$property) {
                 return ['error' => 'Property not found'];
             }
+
             $control = $property->control;
 
-            $name = $property->name;
-            $place = $property->place;
-            $phone_number = $property->phone_number;
-            $owner_name = $property->owner_name;
+            if (!$control) {
+                return ['error' => 'Control not found for the property'];
+            }
 
-            $currentSession->update([
-                'property_id' => $property_id,
-                'active' => true
-            ]);
+            if (!$currentSession) {
+                $currentSession = $this->propertyRepository->createCurrentSession($user_id, $property_id);
+            } else {
+                $currentSession->update([
+                    'property_id' => $property_id,
+                    'active' => true
+                ]);
+            }
 
             return [
-                'message' => 'current_session start successfully',
+                'message' => 'current_session started successfully',
                 'current_session' => $currentSession,
                 'protocol_id' => $control->id,
-                'name' => $name,
-                'place' => $place,
-                'phone_number' => $phone_number,
-                'owner_name' => $owner_name,
+                'name' => $property->name,
+                'place' => $property->place,
+                'phone_number' => $property->phone_number,
+                'owner_name' => $property->owner_name,
             ];
         } catch (\Exception $e) {
             return ['error' => 'Failed to start current_session', 'details' => $e->getMessage()];
         }
     }
+
 
     public function finishWork($request)
     {
@@ -209,6 +214,11 @@ class PropertyService
             }
 
             $currentSession = $user->currentSession;
+            if (!$currentSession) {
+                return [
+                    'error' => 'No active current_session found for user'
+                ];
+            }
             $currentSession->update(['active' => false]);
 
             return [
@@ -230,7 +240,9 @@ class PropertyService
             }
 
             $currentSession = $user->currentSession;
-
+            if (!$currentSession) {
+                return ['error' => 'No active current_session found for user'];
+            }
             $property = $this->propertyRepository->findById($currentSession->property_id);
             if (!$property) {
                 return ['error' => 'Property not found'];
