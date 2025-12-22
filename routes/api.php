@@ -40,7 +40,7 @@ Route::prefix('management')->group(function () {
 
     Route::post('/create', [BullController::class, 'create']);   // crear toro
     Route::get('/all', [BullController::class, 'all']);          // listar toros
-    Route::post('/exists', [BullController::class, 'exists']);
+    //Route::post('/exists', [BullController::class, 'exists']);
   });
 
   Route::prefix('confirmatory-ultrasound')->group(function () {
@@ -77,7 +77,7 @@ Route::prefix('management')->group(function () {
   Route::prefix('pre-sincronizacion')->group(function () {
 
     Route::post('/create', [PresincronizationController::class, 'create']); // registrar pre-sincronización
-    Route::get('/get', [PresincronizationController::class, 'get']);
+    Route::post('/get', [PresincronizationController::class, 'get']);
   });
 
   Route::prefix('property')->group(function () {

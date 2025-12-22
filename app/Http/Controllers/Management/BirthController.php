@@ -30,4 +30,6 @@ class BirthController extends Controller
 
         return response()->json($birthCreate);
     }
+
+    
 }
