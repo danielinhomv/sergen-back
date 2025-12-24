@@ -45,4 +45,19 @@ class GeneralPalpationController extends Controller
         return response()->json($generalPalpation);
 
     }
+
+    public function update(Request $request)
+    {
+        $generalPalpationUpdate = $this->generalPalpationService->update($request);
+
+        if(isset($generalPalpationUpdate['error'])){
+            return response()->json(
+                [
+                'error' => $generalPalpationUpdate['error']
+                ],400
+                ); 
+        }
+
+        return response()->json($generalPalpationUpdate);
+    }
 }

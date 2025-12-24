@@ -47,6 +47,16 @@ class BirthService
                 return ['error' => 'Bovine Control not found'];
             }
 
+            $primeraInseminacion = $bovineControl->first_insemination;
+            if (!$primeraInseminacion) {
+                return ['error' => 'First Insemination not found'];
+            }
+
+            $bullFather = $primeraInseminacion->bull;
+            if (!$bullFather) {
+                return ['error' => 'Bull Father not found'];
+            }
+
             $birth = $bovineControl->birth();
 
             if (!$birth) {
@@ -56,7 +66,7 @@ class BirthService
             return
                 [
                     'message' => 'Birth Retrieved successfully',
-                    'Birth' => $this->toMapSingle($birth)
+                    'Birth' => $this->toMapSingle($birth , $bullFather)
                 ];
 
         } catch (\Exception $e) {
@@ -64,7 +74,28 @@ class BirthService
         }
     }
 
-    private function  toMapSingle($birth)
+    public function update($request)
+    {
+        try {
+
+            $birth = $this->birthRepository->update($request);
+
+            if (!$birth) {
+                return ['error' => 'Failed to update birth'];
+            }
+
+             return
+                [
+                    'message' => 'Birth updated successfully',
+                    'birth' => $this->toMapSingle($birth)
+                ];
+
+        } catch (\Exception $e) {
+            return ['error' => 'Exception occurred: ' . $e->getMessage()];
+        }
+    }
+
+    private function  toMapSingle($birth, $bullFather = null)
     {
         try {
 
@@ -74,6 +105,7 @@ class BirthService
                 'sex' => $birth->sex,
                 'birth_weight' => $birth->birth_weigth,
                 'rgd' => $birth->rgd,
+                'bull_father' => $bullFather->name ?? null,
                 'type_of_birth' => $birth->type_of_birth,
             ];
  

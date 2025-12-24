@@ -68,6 +68,26 @@ class ImplantRetrievalsService
         }
     }
 
+    public function update($request)
+    {
+        try {
+            $implantRetrieval = $this->implantRetrievalsRepository->update($request);
+
+            if (!$implantRetrieval) {
+                return ['error' => 'Failed to update Implant Retrieval'];
+            }
+
+            return
+                [
+                    'message' => 'Implant_retrieval updated successfully',
+                    'implant_retrieval' => $this->toMapSingle($implantRetrieval)
+                ];
+
+        } catch (\Exception $e) {
+            return ['error' => 'Exception occurred: ' . $e->getMessage()];
+        }
+    }
+
     private function  toMapSingle($implantRetrieval)
     {
         try {

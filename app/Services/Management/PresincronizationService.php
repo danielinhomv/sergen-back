@@ -83,4 +83,23 @@ class PresincronizationService
             return ['error' => 'Failed to retrieve Presincronizations', 'details' => $e->getMessage()];
         }
     }
+
+    public function update($request)
+    {
+        try {
+            $presincronization = $this->presincronizationRepository->update($request);
+
+            if (!$presincronization) {
+                return ['error' => 'Failed to update Presincronization'];
+            }
+
+            return
+                [
+                    'message' => 'presincronization updated successfully',
+                    'presincronization' => $this->toMapSingle($presincronization)
+                ];
+        } catch (\Exception $e) {
+            return ['error' => 'Failed to update Presincronization', 'details' => $e->getMessage()];
+        }
+    }
 }

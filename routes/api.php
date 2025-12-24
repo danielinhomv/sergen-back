@@ -112,10 +112,12 @@ Route::prefix('report')->group(function () {
 
 Route::middleware('auth:sanctum')->group(function () {
 
+
   Route::prefix('user')->group(function () {
 
     Route::get('/get', function (Request $request) {
       return $request->user();
     });
   });
+  
 });

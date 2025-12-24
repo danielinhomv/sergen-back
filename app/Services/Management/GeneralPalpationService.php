@@ -65,6 +65,27 @@ class GeneralPalpationService
         }
     }
 
+    public function update($request)
+    {
+        try {
+
+            $generalPalpation = $this->generalPalpationRepository->update($request);
+
+            if (!$generalPalpation) {
+                return ['error' => 'Failed to update General Palpation'];
+            }
+
+            return
+                [
+                    'message' => 'General Palpation updated successfully',
+                    'general palpation' => $this->toMapSingle($generalPalpation)
+                ];
+
+        } catch (\Exception $e) {
+            return ['error' => 'Exception occurred: ' . $e->getMessage()];
+        }
+    }
+
     private function  toMapSingle($general_palpation)
     {
         try {

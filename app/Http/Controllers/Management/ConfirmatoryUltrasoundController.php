@@ -48,4 +48,20 @@ class ConfirmatoryUltrasoundController extends Controller
         return response()->json($confirmatoryUltrasounds);
 
     }
+
+    public function update(Request $request)
+    {
+        $confirmatoryUltrasoundUpdate = $this->confirmatoryUltrasoundService->update($request);
+        
+        if(isset($confirmatoryUltrasoundUpdate['error']))
+        {
+            return response()->json(
+                [
+                    'error'=>$confirmatoryUltrasoundUpdate['error'] 
+                ],400
+            );
+        }
+
+        return response()->json($confirmatoryUltrasoundUpdate);
+    }
 }

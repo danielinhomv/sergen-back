@@ -43,5 +43,7 @@ class BullController extends Controller
         }
         return response()->json($existsResponse);
     }
+
+    
     
 }

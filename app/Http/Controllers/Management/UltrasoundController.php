@@ -36,5 +36,16 @@ class UltrasoundController extends Controller
 
         return response()->json($getResponse);
     }
+
+    public function update(Request $request)
+    {
+        $updateResponse = $this->ultrasoundService->update($request);
+
+        if (isset($updateResponse['error'])) {
+            return response()->json(['error' => $updateResponse['error']], 400);
+        }
+
+        return response()->json($updateResponse);
+    }
     
 }

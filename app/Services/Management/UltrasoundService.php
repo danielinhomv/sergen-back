@@ -84,4 +84,24 @@ class UltrasoundService
             return ['error' => 'Exception occurred: ' . $e->getMessage()];
         }
     }
+
+    public function update($request)
+    {
+        try {
+            $ultrasound = $this->ultrasoundRepository->update($request);
+
+            if (!$ultrasound) {
+                return ['error' => 'Failed to update Ultrasound'];
+            }
+
+            return
+                [
+                    'message' => 'ultrasound updated successfully',
+                    'ultrasound' => $this->toMapSingle($ultrasound)
+                ];
+
+        } catch (\Exception $e) {
+            return ['error' => 'Exception occurred: ' . $e->getMessage()];
+        }
+    }
 }

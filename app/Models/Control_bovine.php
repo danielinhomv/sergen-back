@@ -38,4 +38,19 @@ class Control_bovine extends Model
     {
         return $this->hasOne(Ultrasound::class);
     }
+
+    public function birth()
+    {
+        return $this->hasOne(Birth::class);
+    }
+
+    public function bovine()
+    {
+        return $this->belongsTo(Bovine::class);
+    }
+
+    public function control()
+    {
+        return $this->belongsTo(Control::class);
+    }
 }

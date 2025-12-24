@@ -36,6 +36,17 @@ class ImplantRetrievalsController extends Controller
 
         return response()->json($getResponse);
     }
+
+    public function update(Request $request)
+    {
+        $updateResponse = $this->implantRetrievalsService->update($request);
+
+        if (isset($updateResponse['error'])) {
+            return response()->json(['error' => $updateResponse['error']], 400);
+        }
+
+        return response()->json($updateResponse);
+    }
     
 }
     

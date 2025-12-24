@@ -92,4 +92,23 @@ class ConfirmatoryUltrasoundService
             return ['error' => 'Exception occurred: ' . $e->getMessage()];
         }
     }
+
+    public function update($request)
+    {
+        try {
+            $confirmatoryUltrasound = $this->confirmatoryUltrasoundRepository->update($request);
+
+            if (!$confirmatoryUltrasound) {
+                return ['error' => 'Failed to update Confirmatory Ultrasound'];
+            }
+
+            return [
+                'message' => 'Confirmatory Ultrasound updated successfully',
+                'confirmatory_ultrasound' => $this->toMapSingle($confirmatoryUltrasound)
+            ];
+
+        } catch (\Exception $e) {
+            return ['error' => 'Exception occurred: ' . $e->getMessage()];
+        }
+    }
 }

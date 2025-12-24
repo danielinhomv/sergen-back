@@ -31,5 +31,20 @@ class BirthController extends Controller
         return response()->json($birthCreate);
     }
 
+    public function update(Request $request)
+    {
+        $birthUpdate = $this->birthService->update($request);
+        
+        if(asset($birthUpdate['error'])){
+            return response()->json(
+                [
+                    'error' => $birthUpdate['error']
+                ],400
+            );
+        }
+
+        return response()->json($birthUpdate);
+    }
+
     
 }
