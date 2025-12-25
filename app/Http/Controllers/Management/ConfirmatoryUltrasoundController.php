@@ -64,4 +64,20 @@ class ConfirmatoryUltrasoundController extends Controller
 
         return response()->json($confirmatoryUltrasoundUpdate);
     }
+
+    public function delete(Request $request)
+    {
+        $confirmatoryUltrasoundDelete = $this->confirmatoryUltrasoundService->delete($request->input('id'));
+
+        if(isset($confirmatoryUltrasoundDelete['error']))
+        {
+            return response()->json(
+                [
+                    'error'=>$confirmatoryUltrasoundDelete['error'] 
+                ],400
+            );
+        }
+
+        return response()->json($confirmatoryUltrasoundDelete);
+    }
 }
