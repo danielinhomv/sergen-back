@@ -23,5 +23,14 @@ class ConfirmatoryUltrasoundRepository
         return null;
     }
 
+    public function delete($id)
+    {
+        $confirmatoryUltrasound = Confirmatory_ultrasound::find($id);
+        if ($confirmatoryUltrasound) {
+            return $confirmatoryUltrasound->delete();
+        }
+        return false;
+    }
+
     // Code for ControlBovineRepository would go here
 }

@@ -111,4 +111,22 @@ class ConfirmatoryUltrasoundService
             return ['error' => 'Exception occurred: ' . $e->getMessage()];
         }
     }
+    
+    public function delete($id)
+    {
+        try {
+            $confirmatoryUltrasound = $this->confirmatoryUltrasoundRepository->delete($id);
+
+            if (!$confirmatoryUltrasound) {
+                return ['error' => 'Failed to delete Confirmatory Ultrasound'];
+            }
+
+            return [
+                'message' => 'Confirmatory Ultrasound deleted successfully'
+            ];
+
+        } catch (\Exception $e) {
+            return ['error' => 'Exception occurred: ' . $e->getMessage()];
+        }
+    }
 }

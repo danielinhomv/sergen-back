@@ -16,7 +16,7 @@ return new class extends Migration
             $table->enum('status', ['retrieved', 'lost']);
             $table->string('work_team')->nullable();
             $table->text('used_products_summary')->nullable();
-            $table->date('  ');
+            $table->date('date');
             $table->foreignId('control_bovine_id')->constrained('control_bovines')->onDelete('cascade');
         });
     }

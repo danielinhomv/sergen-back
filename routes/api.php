@@ -47,6 +47,9 @@ Route::prefix('management')->group(function () {
 
     Route::post('/create', [ConfirmatoryUltrasoundController::class, 'create']);
     Route::get('/all', [ConfirmatoryUltrasoundController::class, 'all']);
+    Route::put('/update', [ConfirmatoryUltrasoundController::class, 'update']);
+    
+
   });
 
   Route::prefix('protocol')->group(function () {
@@ -58,12 +61,14 @@ Route::prefix('management')->group(function () {
 
     Route::post('/create', [GeneralPalpationController::class, 'create']);
     Route::get('/get', [GeneralPalpationController::class, 'get']);
+    Route::put('/update', [GeneralPalpationController::class, 'update']);
   });
 
   Route::prefix('implant-retrieval')->group(function () {
 
     Route::post('/create', [ImplantRetrievalsController::class, 'create']);
     Route::get('/get', [ImplantRetrievalsController::class, 'get']);
+    Route::put('/update', [ImplantRetrievalsController::class, 'update']);
   });
 
   Route::prefix('insemination')->group(function () {
@@ -78,6 +83,7 @@ Route::prefix('management')->group(function () {
 
     Route::post('/create', [PresincronizationController::class, 'create']); // registrar pre-sincronización
     Route::post('/get', [PresincronizationController::class, 'get']);
+    Route::put('/update', [PresincronizationController::class, 'update']);
   });
 
   Route::prefix('property')->group(function () {
@@ -98,6 +104,7 @@ Route::prefix('management')->group(function () {
 
     Route::post('/create', [UltrasoundController::class, 'create']);
     Route::get('/get', [UltrasoundController::class, 'get']);
+    Route::put('/update', [UltrasoundController::class, 'update']);
   });
 });
 
