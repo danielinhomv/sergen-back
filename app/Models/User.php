@@ -53,4 +53,9 @@ class User extends Authenticatable
     public function currentSession(){
         return $this->hasOne(Current_session::class);
     }
+
+    public function bulls()
+    {
+        return $this->hasMany(Bull::class);
+    }
 }

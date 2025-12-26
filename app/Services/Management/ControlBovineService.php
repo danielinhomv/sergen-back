@@ -32,6 +32,11 @@ class ControlBovineService
                 return ['error' => 'Control not found'];
             }
 
+            $existingControlBovine = $this->controlBovineRepository->findByBovineAndControl($request->bovine_id, $request->control_id);
+            if ($existingControlBovine) {
+                return $existingControlBovine;
+            }
+
             return $this->controlBovineRepository->create($request);
 
         } catch (\Exception $e) {

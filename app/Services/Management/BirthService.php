@@ -41,7 +41,7 @@ class BirthService
     public function get($request)
     {
         try {
-            $bovineControl = $this->controlBovineRepository->find($request->input('bovine-controls_id'));
+            $bovineControl = $this->controlBovineRepository->find($request->input('control_bovine_id'));
             
             if (!$bovineControl) {
                 return ['error' => 'Bovine Control not found'];

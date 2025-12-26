@@ -14,7 +14,6 @@ use App\Http\Controllers\Management\PropertyController;
 use App\Http\Controllers\Management\UltrasoundController;
 use App\Http\Controllers\Report\BovineReportController;
 use App\Http\Controllers\Report\InseminationReportController;
-use App\Http\Controllers\ReportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -25,30 +24,32 @@ Route::prefix('management')->group(function () {
   Route::prefix('birth')->group(function () {
 
     Route::post('/create', [BirthController::class, 'create']);
+    Route::post('/get', [BirthController::class, 'get']);
+    Route::post('/update', [BirthController::class, 'update']);
   });
 
   Route::prefix('bovine')->group(function () {
 
-    Route::post('/create', [BovineController::class, 'create']);   // crear bovino
+    Route::post('/create', [BovineController::class, 'create']);
     Route::post('/all',  [BovineController::class, 'all']);
     Route::post('/update', [BovineController::class , 'update']);
     Route::post('/delete', [BovineController::class , 'delete']);
-    
+    Route::post('/get-by-serie', [BovineController::class , 'getBySerie']);
   });
 
   Route::prefix('bull')->group(function () {
 
-    Route::post('/create', [BullController::class, 'create']);   // crear toro
-    Route::get('/all', [BullController::class, 'all']);          // listar toros
-    //Route::post('/exists', [BullController::class, 'exists']);
+    Route::post('/create', [BullController::class, 'create']);   
+    Route::post('/all', [BullController::class, 'all']);        
+    Route::post('/update', [BullController::class, 'update']); 
   });
 
   Route::prefix('confirmatory-ultrasound')->group(function () {
 
     Route::post('/create', [ConfirmatoryUltrasoundController::class, 'create']);
-    Route::get('/all', [ConfirmatoryUltrasoundController::class, 'all']);
-    Route::put('/update', [ConfirmatoryUltrasoundController::class, 'update']);
-    
+    Route::post('/all', [ConfirmatoryUltrasoundController::class, 'all']);
+    Route::post('/update', [ConfirmatoryUltrasoundController::class, 'update']);
+    Route::post('/delete', [ConfirmatoryUltrasoundController::class, 'delete']);
 
   });
 
@@ -60,15 +61,15 @@ Route::prefix('management')->group(function () {
   Route::prefix('general-palpation')->group(function () {
 
     Route::post('/create', [GeneralPalpationController::class, 'create']);
-    Route::get('/get', [GeneralPalpationController::class, 'get']);
-    Route::put('/update', [GeneralPalpationController::class, 'update']);
+    Route::post('/get', [GeneralPalpationController::class, 'get']);
+    Route::post('/update', [GeneralPalpationController::class, 'update']);
   });
 
   Route::prefix('implant-retrieval')->group(function () {
 
     Route::post('/create', [ImplantRetrievalsController::class, 'create']);
-    Route::get('/get', [ImplantRetrievalsController::class, 'get']);
-    Route::put('/update', [ImplantRetrievalsController::class, 'update']);
+    Route::post('/get', [ImplantRetrievalsController::class, 'get']);
+    Route::post('/update', [ImplantRetrievalsController::class, 'update']);
   });
 
   Route::prefix('insemination')->group(function () {
@@ -81,9 +82,9 @@ Route::prefix('management')->group(function () {
 
   Route::prefix('pre-sincronizacion')->group(function () {
 
-    Route::post('/create', [PresincronizationController::class, 'create']); // registrar pre-sincronización
+    Route::post('/create', [PresincronizationController::class, 'create']); 
     Route::post('/get', [PresincronizationController::class, 'get']);
-    Route::put('/update', [PresincronizationController::class, 'update']);
+    Route::post('/update', [PresincronizationController::class, 'update']);
   });
 
   Route::prefix('property')->group(function () {
@@ -103,9 +104,16 @@ Route::prefix('management')->group(function () {
   Route::prefix('ultrasound')->group(function () {
 
     Route::post('/create', [UltrasoundController::class, 'create']);
-    Route::get('/get', [UltrasoundController::class, 'get']);
-    Route::put('/update', [UltrasoundController::class, 'update']);
+    Route::post('/get', [UltrasoundController::class, 'get']);
+    Route::post('/update', [UltrasoundController::class, 'update']);
   });
+
+  Route::prefix('control-bovine')->group(function () {
+
+    Route::post('/create', [ControlController::class, 'createControlBovine']);
+    
+  });
+
 });
 
 Route::prefix('report')->group(function () {
@@ -125,6 +133,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/get', function (Request $request) {
       return $request->user();
     });
+
   });
   
 });

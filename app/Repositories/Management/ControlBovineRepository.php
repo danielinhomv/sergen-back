@@ -16,5 +16,12 @@ class ControlBovineRepository
     {
         return Control_bovine::create($request->all());
     }
-    // Code for ControlBovineRepository would go here
+
+    //buscar por bovine_id y control_id
+    public function findByBovineAndControl($bovine_id, $control_id)
+    {
+        return Control_bovine::where('bovine_id', $bovine_id)
+                              ->where('control_id', $control_id)
+                              ->first();
+    }
 }

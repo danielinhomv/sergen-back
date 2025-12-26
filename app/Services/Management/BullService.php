@@ -50,9 +50,10 @@ class BullService
         return ['exists' => $exist];
     }
 
-    public function all($user_id)
+    public function all($request)
     {
         try {
+            $user_id = $request->input('user_id');
             $user = $this->userRepository->find($user_id);
             
             if (!$user) {

@@ -58,4 +58,13 @@ class BovineController extends Controller
         return response()->json($bovineDeleted);
     }
 
+    public function getBySerie(Request $request)    
+    {                       
+        $bovine = $this->bovineService->getBySerie($request);
+        if (isset($bovine['error'])) {
+            return response()->json(['error' => $bovine['error']], 400);        
+
+        }
+        return response()->json($bovine);
+    }   
 }

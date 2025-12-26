@@ -159,6 +159,27 @@ class BovineService
         }
     }
 
+    public function getBySerie($request)
+    {
+        try {
+            $serie = $request->input('serie');
+            $propertyId = $request->input('property_id');
+
+            $bovine = $this->bovineRepository->findBySerie($serie, $propertyId);
+
+            if (!$bovine) {
+                return ['error' => 'Bovine not found'];
+            }
+
+            return [
+                'message' => 'Bovine retrieved successfully',
+                'bovine' => $this->toMapSingle($bovine)
+            ];
+        } catch (\Exception $e) {
+            return ['error' => 'Failed to retrieve bovine', 'details' => $e->getMessage()];
+        }
+    }
+
     private function existSerieAt($valor, $propertyId)
     {
         $bovine = $this->bovineRepository->existSerie($valor, $propertyId);
@@ -170,4 +191,6 @@ class BovineService
         $bovine = $this->bovineRepository->existRgd($valor, $propertyId);
         return $bovine != null;
     }
+
+
 }
