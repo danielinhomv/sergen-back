@@ -2,27 +2,30 @@
 
 namespace App\Services\Management;
 
+use App\Repositories\Management\ControlRepository;
 use App\Repositories\Management\PropertyRepository;
 use App\Repositories\Management\UserRepository;
 use Exception;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class PropertyService
 {
 
     private PropertyRepository $propertyRepository;
+    private ControlRepository $controlRepository;
     private UserRepository $userRepository;
     private ControlService $controlService;
 
     public function __construct(
         PropertyRepository $propertyRepository,
         UserRepository $userRepository,
-        ControlService $controlService
+        ControlService $controlService,
+        ControlRepository $controlRepository
     ) {
         $this->propertyRepository = $propertyRepository;
         $this->userRepository = $userRepository;
         $this->controlService = $controlService;
+        $this->controlRepository = $controlRepository;
     }
 
     public function getAllProperties($user_id)
@@ -171,7 +174,7 @@ class PropertyService
                 return ['error' => 'Property not found'];
             }
 
-            $control = $property->control;
+            $control = $this->controlRepository->findById($request->input('control_id'));
 
             if (!$control) {
                 return ['error' => 'Control not found for the property'];
@@ -190,6 +193,9 @@ class PropertyService
                 'message' => 'current_session started successfully',
                 'current_session' => $currentSession,
                 'protocol_id' => $control->id,
+                'protocol_status' => $control->status,
+                'protocol_start_date' => $control->start_date,
+                'protocol_end_date' => $control->end_date,
                 'name' => $property->name,
                 'place' => $property->place,
                 'phone_number' => $property->phone_number,
@@ -248,28 +254,48 @@ class PropertyService
                 return ['error' => 'Property not found'];
             }
 
-            $name = $property->name;
-            $place = $property->place;
-            $phone_number = $property->phone_number;
-            $owner_name = $property->owner_name;
 
             $control = $property->control;
 
             if ($currentSession->isActive()) {
                 return [
                     "property_id" => $currentSession->property_id,
-                    "name" => $name,
-                    "place" => $place,
-                    "phone_number" => $phone_number,
-                    "owner_name" => $owner_name,
+                    "name" => $property->name,
+                    "place" => $property->place,
+                    "phone_number" => $property->phone_number,
+                    "owner_name" => $property->owner_name,
                     "active" => true,
-                    "protocol_id" => $control->id
+                    "protocol_id" => $control->id,
+                    "protocol_status" => $control->status,
+                    "protocol_start_date" => $control->start_date,
+                    "protocol_end_date" => $control->end_date
                 ];
             }
 
             return ["active" => false];
         } catch (\Throwable $e) {
             return ['error' => 'Failed to verify', 'details' => $e->getMessage()];
+        }
+    }
+
+    public function getControlsByPropertyId($property_id)
+    {
+        try {
+            $property = $this->propertyRepository->findById($property_id);
+
+            if (!$property) {
+                return ['error' => 'Property not found'];
+            }
+
+            $controls = $property->controls;
+
+            return [
+                'message' => 'Controls retrieved successfully',
+                'controls' => $controls
+            ];  
+
+        } catch (\Exception $e) {
+            return ['error' => 'Failed to retrieve control', 'details' => $e->getMessage()];
         }
     }
 }

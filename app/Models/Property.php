@@ -14,9 +14,9 @@ class Property extends Model
         return $this->hasMany(Bovine::class);
     }
 
-    public function control()
+    public function controls()
     {
-        return $this->hasOne(Control::class);
+        return $this->hasMany(Control::class);
     }
 
     public function user()

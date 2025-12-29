@@ -34,8 +34,8 @@ class ControlAndBreedingSeeder extends Seeder
             // Crear control propio de la propiedad
             $controlId = DB::table('controls')->insertGetId([
                 'property_id' => $propertyId,
-                'created_at' => now()->subMonths(3),
-                'updated_at' => now(),
+                'status' => 'in progress',
+                'start_date' => now(),
             ]);
 
             // Crear control_bovines

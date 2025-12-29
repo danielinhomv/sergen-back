@@ -98,7 +98,7 @@ Route::prefix('management')->group(function () {
     Route::post('/start-work', [PropertyController::class, 'startWork']);
     Route::post('/finish-work', [PropertyController::class, 'finishWork']);
     Route::post('/isWorked', [PropertyController::class, 'isWorked']);
-
+    Route::get('/controls/{id}', [PropertyController::class, 'getControlsByPropertyId']);
   });
 
   Route::prefix('ultrasound')->group(function () {

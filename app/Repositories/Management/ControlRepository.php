@@ -9,7 +9,9 @@ class ControlRepository
     public function create($propertyId)
     {
         return Control::create([
-            'property_id'=>$propertyId
+            'property_id'=>$propertyId,
+            'status'=>'in progress',
+            'start_date'=>now()
         ]);
     }
 
@@ -18,4 +20,10 @@ class ControlRepository
         return Control::findOrFail($id);
     }
 
+    public function getLastControl($propertyId)
+    {
+        return Control::where('property_id', $propertyId)   
+            ->orderBy('start_date', 'desc')
+            ->first();
+    }
 }

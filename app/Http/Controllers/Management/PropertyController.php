@@ -87,4 +87,13 @@ class PropertyController extends Controller
         }
         return response()->json($isWorked);
     }
+
+    public function getControlsByPropertyId($id)
+    {
+        $controls = $this->propertyService->getControlsByPropertyId($id);
+        if (isset($controls['error'])) {
+            return response()->json(['error' => $controls['error']], 400);
+        }
+        return response()->json($controls);
+    }
 }

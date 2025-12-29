@@ -24,7 +24,8 @@ class ControlService
         $protocolo->save();
         return $protocolo;
     }
-
+    // se debe crear un nuevo protocolo pero no eliminar el anterior , se establece
+    // la fecha del sistema a la fecha de fin del protocolo anterior y cambiar el estado a finalizado
     public function startNewProtocol($request)
     {
         try {
@@ -37,11 +38,13 @@ class ControlService
                 return ['error' => 'Property not found'];
             }
 
-            $control = $property->control;
-
-            if ($control) {
-                $control->delete();
+            $lastControl = $this->controlRepository->getLastControl($property_id);
+            if ($lastControl) {
+                $lastControl->end_date = now();
+                $lastControl->status = 'finished';
+                $lastControl->save();
             }
+
 
             $protocolo = $this->createProtocolo($property_id);
             if (!$protocolo) {
