@@ -38,4 +38,9 @@ class BovineRepository
             ->first();
     }
 
+    public function createRaw($data)
+    {
+        return Bovine::create($data);
+    }
+
 }

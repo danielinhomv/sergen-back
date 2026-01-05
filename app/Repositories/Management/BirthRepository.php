@@ -6,19 +6,20 @@ use App\Models\Birth;
 
 class BirthRepository
 {
-    public function create($request)
+    public function createRaw($data)
     {
-        return Birth::create($request->all());
+        return Birth::create($data);
     }
 
     public function update($request)
     {
         $birth = Birth::find($request->input('id'));
         if ($birth) {
-            $birth->update($request->all());
+            $birth->type_of_birth = $request->input('type_of_birth', $birth->type_of_birth);
+            $birth->control_bovine_id = $request->input('control_bovine_id', $birth->control_bovine_id);
+            $birth->save();
             return $birth;
         }
         return null;
     }
-   
 }
