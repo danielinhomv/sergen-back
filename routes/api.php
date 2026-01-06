@@ -78,9 +78,12 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::post('/delete', [ConfirmatoryUltrasoundController::class, 'delete']);
         });
 
-        /* PROTOCOL */
+        /* PROTOCOL(GESTION) */
         Route::prefix('protocol')->group(function () {
-            Route::post('/start', [ControlController::class, 'startNewProtocol']);
+            Route::post('/create', [ControlController::class, 'createControl']);
+            Route::post('/update', [ControlController::class, 'updateControl']);
+            Route::post('/get-last', [ControlController::class, 'getLastControl']);
+            Route::post('/delete', [ControlController::class, 'deleteControl']);
         });
 
         /* GENERAL PALPATION */
@@ -114,7 +117,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
         /* PROPERTY */
         Route::prefix('property')->group(function () {
-            Route::get('/list', [PropertyController::class, 'listProperties']);
+            Route::post('/list', [PropertyController::class, 'listProperties']);
             Route::post('/create', [PropertyController::class, 'createProperty']);
             Route::put('/update/{id}', [PropertyController::class, 'updateProperty']);
             Route::delete('/delete/{id}', [PropertyController::class, 'deleteProperty']);

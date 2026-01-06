@@ -6,7 +6,6 @@ use App\Repositories\Management\ControlRepository;
 use App\Repositories\Management\PropertyRepository;
 use App\Repositories\Management\UserRepository;
 use Exception;
-use Illuminate\Support\Facades\DB;
 
 class PropertyService
 {
@@ -60,21 +59,11 @@ class PropertyService
     public function createProperty($request)
     {
         try {
-            DB::beginTransaction();
 
             $property = $this->propertyRepository->create($request);
             if (!$property) {
                 return ['error' => 'Property Not found'];
             }
-
-            $protocolo = $this->controlService->createProtocolo($property->id);
-            if (!$protocolo) {
-                DB::rollBack();
-                return ['error' => 'Failed to create protocol'];
-            }
-
-            DB::commit();
-
             return
                 [
                     'message' => 'Property created successfully',
@@ -154,6 +143,7 @@ class PropertyService
         }
     }
 
+    //control es la gestion en alguna propiedad
     public function startWork($request)
     {
         try {
@@ -181,10 +171,11 @@ class PropertyService
             }
 
             if (!$currentSession) {
-                $currentSession = $this->propertyRepository->createCurrentSession($user_id, $property_id);
+                $currentSession = $this->propertyRepository->createCurrentSession($user_id, $property_id, $control->id);
             } else {
                 $currentSession->update([
                     'property_id' => $property_id,
+                    'control_id' => $control->id,
                     'active' => true
                 ]);
             }

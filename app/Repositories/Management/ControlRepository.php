@@ -6,12 +6,12 @@ use App\Models\Control;
 
 class ControlRepository
 {
-    public function create($propertyId)
+    public function create($propertyId, $startDate, $endDate)
     {
         return Control::create([
             'property_id'=>$propertyId,
-            'status'=>'in progress',
-            'start_date'=>now()
+            'start_date'=>$startDate,
+            'end_date'=>$endDate ?? null
         ]);
     }
 
@@ -20,10 +20,11 @@ class ControlRepository
         return Control::findOrFail($id);
     }
 
-    public function getLastControl($propertyId)
+    //todos los controles de una propiedad ordenados por fecha descendente
+    public function findByPropertyId($propertyId)
     {
-        return Control::where('property_id', $propertyId)   
+        return Control::where('property_id', $propertyId)
             ->orderBy('start_date', 'desc')
-            ->first();
+            ->get();
     }
 }
