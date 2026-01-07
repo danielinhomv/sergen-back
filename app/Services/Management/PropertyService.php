@@ -4,27 +4,17 @@ namespace App\Services\Management;
 
 use App\Repositories\Management\ControlRepository;
 use App\Repositories\Management\PropertyRepository;
-use App\Repositories\Management\UserRepository;
 use Exception;
 
 class PropertyService
 {
 
     private PropertyRepository $propertyRepository;
-    private ControlRepository $controlRepository;
-    private UserRepository $userRepository;
-    private ControlService $controlService;
 
     public function __construct(
-        PropertyRepository $propertyRepository,
-        UserRepository $userRepository,
-        ControlService $controlService,
-        ControlRepository $controlRepository
+        PropertyRepository $propertyRepository
     ) {
         $this->propertyRepository = $propertyRepository;
-        $this->userRepository = $userRepository;
-        $this->controlService = $controlService;
-        $this->controlRepository = $controlRepository;
     }
 
     public function getAllProperties($user_id)
@@ -140,132 +130,6 @@ class PropertyService
                 ];
         } catch (\Exception $e) {
             return ['error' => 'Failed to delete property', 'details' => $e->getMessage()];
-        }
-    }
-
-    //control es la gestion en alguna propiedad
-    public function startWork($request)
-    {
-        try {
-            $user_id = $request->input('user_id');
-            $user = $this->userRepository->find($user_id);
-
-            if (!$user) {
-                return ['error' => 'User not found'];
-            }
-
-            // Buscar la current_session existente
-            $currentSession = $user->currentSession;
-
-            $property_id = $request->input('property_id');
-            $property = $this->propertyRepository->findById($property_id);
-
-            if (!$property) {
-                return ['error' => 'Property not found'];
-            }
-
-            $control = $this->controlRepository->findById($request->input('control_id'));
-
-            if (!$control) {
-                return ['error' => 'Control not found for the property'];
-            }
-
-            if (!$currentSession) {
-                $currentSession = $this->propertyRepository->createCurrentSession($user_id, $property_id, $control->id);
-            } else {
-                $currentSession->update([
-                    'property_id' => $property_id,
-                    'control_id' => $control->id,
-                    'active' => true
-                ]);
-            }
-
-            return [
-                'message' => 'current_session started successfully',
-                'current_session' => $currentSession,
-                'protocol_id' => $control->id,
-                'protocol_status' => $control->status,
-                'protocol_start_date' => $control->start_date,
-                'protocol_end_date' => $control->end_date,
-                'name' => $property->name,
-                'place' => $property->place,
-                'phone_number' => $property->phone_number,
-                'owner_name' => $property->owner_name,
-            ];
-        } catch (\Exception $e) {
-            return ['error' => 'Failed to start current_session', 'details' => $e->getMessage()];
-        }
-    }
-
-
-    public function finishWork($request)
-    {
-        try {
-            $user_id = $request->input('user_id');
-            $user = $this->userRepository->find($user_id);
-
-            if (!$user) {
-                return [
-                    'error' => 'User not found'
-                ];
-            }
-
-            $currentSession = $user->currentSession;
-            if (!$currentSession) {
-                return [
-                    'error' => 'No active current_session found for user'
-                ];
-            }
-            $currentSession->update(['active' => false]);
-
-            return [
-                'message' => 'current_session finalized successfully',
-                'current_session' => $currentSession
-            ];
-        } catch (\Exception $e) {
-            return ['error' => 'Failed to finalized current_session', 'details' => $e->getMessage()];
-        }
-    }
-
-    public function isWorked($request)
-    {
-        try {
-            $user = $this->userRepository->find($request->input('user_id'));
-
-            if (!$user) {
-                return ['error' => 'User not found'];
-            }
-
-            $currentSession = $user->currentSession;
-            if (!$currentSession) {
-                return ['error' => 'No active current_session found for user'];
-            }
-            $property = $this->propertyRepository->findById($currentSession->property_id);
-            if (!$property) {
-                return ['error' => 'Property not found'];
-            }
-
-
-            $control = $property->control;
-
-            if ($currentSession->isActive()) {
-                return [
-                    "property_id" => $currentSession->property_id,
-                    "name" => $property->name,
-                    "place" => $property->place,
-                    "phone_number" => $property->phone_number,
-                    "owner_name" => $property->owner_name,
-                    "active" => true,
-                    "protocol_id" => $control->id,
-                    "protocol_status" => $control->status,
-                    "protocol_start_date" => $control->start_date,
-                    "protocol_end_date" => $control->end_date
-                ];
-            }
-
-            return ["active" => false];
-        } catch (\Throwable $e) {
-            return ['error' => 'Failed to verify', 'details' => $e->getMessage()];
         }
     }
 

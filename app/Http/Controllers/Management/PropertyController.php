@@ -61,33 +61,6 @@ class PropertyController extends Controller
         return response()->json($property);
     }
 
-    public function startWork(Request $request)
-    {
-        $currentSession = $this->propertyService->startWork($request);
-        if (isset($currentSession['error'])) {
-            return response()->json(['error' => $currentSession['error']], 400);
-        }
-        return response()->json($currentSession);
-    }
-
-    public function finishWork(Request $request)
-    {
-        $currentSession = $this->propertyService->finishWork($request);
-        if (isset($currentSession['error'])) {
-            return response()->json(['error' => $currentSession['error']], 400);
-        }
-        return response()->json($currentSession);
-    }
-
-    public function isWorked(Request $request)
-    {
-        $isWorked = $this->propertyService->isWorked($request);
-        if (isset($isWorked['error'])) {
-            return response()->json(['error' => $isWorked['error']], 400);
-        }
-        return response()->json($isWorked);
-    }
-
     public function getControlsByPropertyId($id)
     {
         $controls = $this->propertyService->getControlsByPropertyId($id);

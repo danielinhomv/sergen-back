@@ -21,16 +21,4 @@ class PropertyRepository
         return Property::create($request->all());
     }
 
-    public function createCurrentSession($user_id,$property_id,$control_id){
-        return Current_session::create([
-            'user_id'=>$user_id,
-            'property_id'=>$property_id,
-            'control_id'=>$control_id,
-            'active'=> true
-        ]);
-    }
-
-    public function getCurrentSession($id){
-        return Current_session::find($id);
-    }
 }
