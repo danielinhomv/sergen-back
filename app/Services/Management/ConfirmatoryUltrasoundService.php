@@ -46,14 +46,15 @@ class ConfirmatoryUltrasoundService
         }
     }
 
-    private function toMapSingle($ultrasound)
+    private function toMapSingle($confirmatoryUltrasound)
     {
 
         return [
-            'id' => $ultrasound->id,
-            'status' => $ultrasound->status,
-            'observation' => $ultrasound->observation,
-            'date' => $ultrasound->date
+            'id' => $confirmatoryUltrasound->id,
+            'status' => $confirmatoryUltrasound->status,
+            'observation' => $confirmatoryUltrasound->observation,
+            'refugo' => $confirmatoryUltrasound->refugo,
+            'date' => $confirmatoryUltrasound->date
         ];
     }
 

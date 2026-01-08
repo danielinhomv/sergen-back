@@ -53,6 +53,7 @@ class UltrasoundService
                 'protocol_details' => $ultrasound->protocol_details,
                 'used_products_summary' => $ultrasound->used_products_summary,
                 'work_team' => $ultrasound->work_team,
+                'regufo' => $ultrasound->regufo,
                 'date' => $ultrasound->date
             ];
         } catch (\Exception $e) {
