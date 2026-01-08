@@ -72,7 +72,7 @@ class ConfirmatoryUltrasoundService
     public function All($request)
     {
         try {
-            $bovineControl = $this->controlBovineRepository->create($request);
+            $bovineControl = $this->controlBovineRepository->find($request->input('bovine-controls_id'));
 
             if (!$bovineControl) {
                 return ['error' => 'Bovine Control not found'];

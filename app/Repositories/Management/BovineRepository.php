@@ -26,9 +26,10 @@ class BovineRepository
             ->first();
     }
 
-    public function findById($id)
+    public function findById($id, $propertyId)
     {
-        return Bovine::findOrFail($id);
+        return Bovine::where('property_id', $propertyId)
+            ->findOrFail($id);
     }
 
     public function findBySerie($serie, $propertyId)

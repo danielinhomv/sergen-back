@@ -12,9 +12,12 @@ class ControlBovineRepository
         return Control_bovine::find($id);
     }
 
-    public function create($request)
+    public function create($bovine_id, $control_id)
     {
-        return Control_bovine::create($request->all());
+        return Control_bovine::create([
+            'bovine_id' => $bovine_id,
+            'control_id' => $control_id
+        ]);
     }
 
     //buscar por bovine_id y control_id
