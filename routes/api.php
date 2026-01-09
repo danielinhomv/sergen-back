@@ -69,6 +69,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::post('/create', [BullController::class, 'create']);   
             Route::post('/all', [BullController::class, 'all']);        
             Route::post('/update', [BullController::class, 'update']); 
+            Route::post('/delete', [BullController::class, 'delete']);
         });
 
         /* CONFIRMATORY ULTRASOUND */

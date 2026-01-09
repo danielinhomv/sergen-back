@@ -22,4 +22,16 @@ class BullRepository
     {
         return Bull::find($id);
     }
+
+    public function find($id, $user_id)
+    {
+        return Bull::where('id', $id)
+            ->where('user_id', $user_id)
+            ->first();
+    }
+
+    public function findById($id)
+    {
+        return Bull::find($id);
+    }   
 }

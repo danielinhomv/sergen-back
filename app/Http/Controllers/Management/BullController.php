@@ -44,6 +44,22 @@ class BullController extends Controller
         return response()->json($existsResponse);
     }
 
-    
-    
+
+    public function update(Request $request)
+    {
+        $updateResponse = $this->bullService->update($request);
+        if (isset($updateResponse['error'])) {
+            return response()->json(['error' => $updateResponse['error']], 400);
+        }
+        return response()->json($updateResponse);
+    }
+
+    public function delete(Request $request)
+    {
+        $deleteResponse = $this->bullService->delete($request);
+        if (isset($deleteResponse['error'])) {
+            return response()->json(['error' => $deleteResponse['error']], 400);
+        }
+        return response()->json($deleteResponse);
+    }
 }

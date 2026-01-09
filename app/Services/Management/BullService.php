@@ -25,7 +25,11 @@ class BullService
             if (!$user) {
                 return ['error' => 'User not found'];
             }
-
+            $name = $request->input('name');
+            $exists = $this->bullRepository->exits($name, $user_id);
+            if ($exists) {
+                return ['error' => 'Bull with the same name already exists for this user'];
+            }
             $bull = $this->bullRepository->create($request);
 
             $bull->save();
@@ -95,6 +99,52 @@ class BullService
             ];
         } catch (\Exception $e) {
             return ['error' => 'Exception occurred: ' . $e->getMessage()];
+        }
+    }
+
+    //update con request
+    public function update($request)
+    {
+        try {
+            $user_id = $request->input('user_id');
+            $user = $this->userRepository->find($user_id);
+
+            if (!$user) {
+                return ['error' => 'User not found'];
+            }
+
+            $bull_id = $request->input('bull_id');
+            $bull = $this->bullRepository->find($bull_id, $user_id);
+            if (!$bull) {
+                return ['error' => 'Bull not found'];
+            }
+            $bull->name = $request->input('name', $bull->name);
+            $bull->save();
+            return [
+                'message' => 'Bull updated successfully',
+                'bull' => $this->toMapSingle($bull)
+            ];
+        } catch (\Exception $e) {
+            return ['error' => 'Failed to update bull: ' . $e->getMessage()];
+        }
+    }
+    
+    //eliminar bull
+    public function delete($request)
+    {
+        try {
+            $bull_id = $request->input('id');
+            $bull = $this->bullRepository->findById($bull_id);
+            if (!$bull) {
+                return ['error' => 'Bull not found'];
+            }
+            $bull->delete();
+            return [
+                'message' => 'Bull deleted successfully',
+                'bull' => $this->toMapSingle($bull)
+            ];
+        } catch (\Exception $e) {
+            return ['error' => 'Failed to delete bull: ' . $e->getMessage()];
         }
     }
 }
