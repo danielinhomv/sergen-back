@@ -20,7 +20,7 @@ class BirthController extends Controller
     {
         $birthCreate = $this->birthService->create($request);
         
-        if(asset($birthCreate['error'])){
+        if(isset($birthCreate['error'])){
             return response()->json(
                 [
                     'error' => $birthCreate['error']

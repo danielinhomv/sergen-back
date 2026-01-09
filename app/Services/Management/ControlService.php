@@ -57,7 +57,7 @@ class ControlService
     public function updateControl($request)
     {
         try {
-            $control = $this->controlRepository->findById($request->input('id'));
+            $control = $this->controlRepository->findById($request->input('id'), $request->input('property_id'));
             if (!$control) {
                 return ['error' => 'Control not found'];
             }

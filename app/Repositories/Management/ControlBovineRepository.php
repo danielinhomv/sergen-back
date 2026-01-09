@@ -27,4 +27,11 @@ class ControlBovineRepository
                               ->where('control_id', $control_id)
                               ->first();
     }
+
+    public function lockForUpdate($id)
+    {
+        return Control_bovine::where('id', $id)
+                             ->lockForUpdate()
+                             ->first();
+    }
 }

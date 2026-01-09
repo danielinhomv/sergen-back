@@ -5,7 +5,6 @@ namespace App\Services\Management;
 use App\Repositories\Management\BovineRepository;
 use App\Repositories\Management\PropertyRepository;
 use Exception;
-use Illuminate\Support\Facades\DB;
 
 class BovineService
 {

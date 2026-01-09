@@ -2,7 +2,6 @@
 
 namespace App\Services\Management;
 
-use App\Repositories\Management\ControlRepository;
 use App\Repositories\Management\PropertyRepository;
 use Exception;
 

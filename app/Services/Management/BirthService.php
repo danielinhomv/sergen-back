@@ -24,48 +24,91 @@ class BirthService
         $this->bovineRepository = $bovineRepository;
     }
 
-    public function create($request)
-    {
-        return DB::transaction(function () use ($request) {
-            try {
-                // 1. Crear el Bovino (el hijo/cría)
-                $bovineData = [
-                    'birthdate'   => $request->input('birthdate'),
-                    'sex'         => $request->input('sex'),
-                    'weight'      => $request->input('birth_weight'),
-                    'rgd'         => $request->input('rgd'),
-                    'property_id' => $request->input('property_id'),
-                    'mother_id'   => $request->input('bovine_id'), // ID de la madre
-                ];
+public function create($request)
+{
+    DB::beginTransaction();
 
-                //validar que la rgd no exista en algunos de los bovinos de la propiedad
-                $existingBovine = $this->bovineRepository->existRgd($bovineData['rgd'], $bovineData['property_id']);
-                if ($existingBovine) {
-                    return ['error' => 'Rgd already exists for another bovine in the property'];
-                }
+    try {
 
-                $bovine = $this->bovineRepository->createRaw($bovineData);
+        // 1. Bloquear el control bovino (evita partos duplicados)
+        $bovineControl = $this->controlBovineRepository
+            ->lockForUpdate($request->input('control_bovine_id'));
 
-                // 2. Crear el Parto asociado al hijo y al control
-                $birthData = [
-                    'type_of_birth'     => $request->input('type_of_birth'),
-                    'control_bovine_id' => $request->input('control_bovine_id'),
-                    'bovine_id'         => $bovine->id, // Relacionamos con el nuevo bovino
-                ];
+        if (!$bovineControl) {
+            return ['error' => 'Bovine Control not found'];
+        }
 
-                $birth = $this->birthRepository->createRaw($birthData);
+        if ($bovineControl->birth) {
+            return ['error' => 'Birth record already exists for this Bovine Control'];
+        }
 
-                return [
-                    'status'  => 'success',
-                    'message' => 'Bovino y Parto creados correctamente',
-                    'data'    => $this->toMapSingle($birth, null, $bovine)
-                ];
-            } catch (Exception $e) {
-                // El rollback es automático en DB::transaction si hay una excepción
-                return ['error' => 'Exception occurred: ' . $e->getMessage()];
+        $typeOfBirth = $request->input('type_of_birth');
+
+        // 2. Crear cría solo si nació viva
+        if (in_array($typeOfBirth, ['normal', 'premeture'])) {
+
+            // 2.1 Validar RGD dentro de la transacción
+            $rgdExists = $this->bovineRepository->existRgd(
+                $request->input('rgd'),
+                $request->input('property_id')
+            );
+
+            if ($rgdExists) {
+                return ['error' => 'Rgd already exists for another bovine in the property'];
             }
-        });
+
+            $bovineData = [
+                'birthdate'   => $request->input('birthdate'),
+                'sex'         => $request->input('sex'),
+                'weight'      => $request->input('birth_weight'),
+                'rgd'         => $request->input('rgd'),
+                'property_id' => $request->input('property_id'),
+                'mother_id'   => $request->input('bovine_id'),
+            ];
+
+            $bovine = $this->bovineRepository->createRaw($bovineData);
+
+            if (!$bovine) {
+                throw new \Exception('Failed to create bovine');
+            }
+
+        } else {
+            // Abort o stillbirth → no hay cría
+            $bovine = null;
+        }
+
+        // 3. Crear el parto
+        $birthData = [
+            'type_of_birth'     => $typeOfBirth,
+            'control_bovine_id' => $request->input('control_bovine_id'),
+            'bovine_id'         => $bovine?->id,
+        ];
+
+        $birth = $this->birthRepository->createRaw($birthData);
+
+        if (!$birth) {
+            throw new \Exception('Failed to create birth record');
+        }
+
+        DB::commit();
+
+        return [
+            'message' => 'Birth registered successfully',
+            'birth'   => $this->toMapSingle($birth, null, $bovine)
+        ];
+
+    } catch (\Throwable $e) {
+        DB::rollBack();
+
+        return [
+            'error'  => 'Transaction failed',
+            'detail' => $e->getMessage()
+        ];
     }
+}
+
+
+
 
     public function get($request)
     {
@@ -87,7 +130,7 @@ class BirthService
             }
 
             // IMPORTANTE: Obtenemos el bovino (cría) asociado al parto
-            $bovine = $birth->bovine; 
+            $bovine = $birth->bovine;
 
             return [
                 'status' => 'success',

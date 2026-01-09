@@ -15,10 +15,9 @@ class ControlRepository
         ]);
     }
 
-    public function findById($id, $propertyId)
+    public function findById($id)
     {
-        return Control::where('property_id', $propertyId)
-            ->findOrFail($id);
+        return Control::find($id);
     }
 
     //todos los controles de una propiedad ordenados por fecha descendente
