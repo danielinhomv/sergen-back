@@ -107,11 +107,11 @@ class BovineService
     {
         try {
             $bovineId = $request->input('id');
-            $bovineFinded = $this->bovineRepository->findById($bovineId);
+            $propertyId = $request->input('property_id');
+            $bovineFinded = $this->bovineRepository->findById($bovineId, $propertyId);
 
             $bovineFinded->delete();
 
-            $propertyId = $bovineFinded->property_id;
             $bovines = $this->getBovines($propertyId);
 
             return [
@@ -127,9 +127,8 @@ class BovineService
     {
         try {
             $bovineId = $request->input('id');
-            $bovineFinded = $this->bovineRepository->findById($bovineId);
-
-            $propertyId = $bovineFinded->property_id;
+            $propertyId = $request->input('property_id');
+            $bovineFinded = $this->bovineRepository->findById($bovineId, $propertyId);
 
             $serie = $request->input('serie');
             $rgd = $request->input('rgd');

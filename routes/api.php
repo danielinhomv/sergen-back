@@ -5,6 +5,7 @@ use App\Http\Controllers\Management\BirthController;
 use App\Http\Controllers\Management\BovineController;
 use App\Http\Controllers\Management\BullController;
 use App\Http\Controllers\Management\ConfirmatoryUltrasoundController;
+use App\Http\Controllers\Management\ControlBovineController;
 use App\Http\Controllers\Management\ControlController;
 use App\Http\Controllers\Management\GeneralPalpationController;
 use App\Http\Controllers\Management\ImplantRetrievalsController;
@@ -135,7 +136,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
         /* CONTROL - BOVINE */
         Route::prefix('control-bovine')->group(function () {
-            Route::post('/create', [ControlController::class, 'createControlBovine']);
+            Route::post('/create', [ControlBovineController::class, 'create']);
         });
 
     });
