@@ -22,17 +22,20 @@ class GeneralPalpationService
     public function create($request)
     {
         try {
-
+            $controlBovine = $this->controlBovineRepository->find($request->input('control_bovine_id'));
+            if (!$controlBovine) {
+                return ['error' => 'Bovine Control not found'];
+            }
             $generalPalpation = $this->generalPalpationRepository->create($request);
 
             if (!$generalPalpation) {
-                return ['error' => 'Failed to create Implant Retrieval'];
+                return ['error' => 'Failed to create General Palpation'];
             }
 
             return
                 [
                     'message' => 'General palpation created successfully',
-                    'general palpation' => $this->toMapSingle($generalPalpation)
+                    'generalPalpation' => $this->toMapSingle($generalPalpation)
                 ];
 
         } catch (\Exception $e) {
@@ -49,15 +52,18 @@ class GeneralPalpationService
                 return ['error' => 'Bovine Control not found'];
             }
 
-            $generalPalpation = $bovineControl->generalPalpation;
+            $generalPalpation = $bovineControl->general_palpation;
 
             if (!$generalPalpation) {
-                return ['error' => 'Implant Retrieval not found'];
+                return [
+                    'message' => 'No General palpation data found',
+                    'generalPalpation' => null
+                ]; //no debes devolver error si no hay datos
             }
             return
                 [
                     'message' => 'General palpation retrieved successfully',
-                    'general palpation' => $this->toMapSingle($generalPalpation)
+                    'generalPalpation' => $this->toMapSingle($generalPalpation)
                 ];
 
         } catch (\Exception $e) {
@@ -78,7 +84,7 @@ class GeneralPalpationService
             return
                 [
                     'message' => 'General Palpation updated successfully',
-                    'general palpation' => $this->toMapSingle($generalPalpation)
+                    'generalPalpation' => $this->toMapSingle($generalPalpation)
                 ];
 
         } catch (\Exception $e) {

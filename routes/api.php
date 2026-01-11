@@ -106,7 +106,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::prefix('insemination')->group(function () {
             Route::post('/create', [InseminationController::class, 'create']);
             Route::post('/all', [InseminationController::class, 'all']);
-            Route::put('/update/{id}', [InseminationController::class, 'update']);
+            Route::post('/update', [InseminationController::class, 'update']);
             Route::post('/delete', [InseminationController::class, 'delete']);
         });
 

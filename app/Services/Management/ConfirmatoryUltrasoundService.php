@@ -24,7 +24,7 @@ class ConfirmatoryUltrasoundService
     {
 
         try {
-            $bovineControl = $this->controlBovineRepository->find($request->input('bovine-controls_id'));
+            $bovineControl = $this->controlBovineRepository->find($request->input('control_bovine_id'));
 
             if (!$bovineControl) {
                 return ['error' => 'Bovine Control not found'];
@@ -33,12 +33,12 @@ class ConfirmatoryUltrasoundService
             $confirmatoryUltrasound = $this->confirmatoryUltrasoundRepository->create($request);
 
             if (!$confirmatoryUltrasound) {
-                return ['error' => 'Failed to create Implant Retrieval'];
+                return ['error' => 'Failed to create Confirmatory Ultrasound'];
             }
 
             return [
-                'message' => 'Confirmatory_ultrasound created successfully',
-                'confirmatory_ultrasound' => $this->toMapSingle($confirmatoryUltrasound)
+                'message' => 'confirmatoryUltrasounds created successfully',
+                'confirmatoryUltrasounds' => $this->toMapSingle($confirmatoryUltrasound)
             ];
 
         } catch (\Exception $e) {
@@ -61,7 +61,7 @@ class ConfirmatoryUltrasoundService
     private function toMap($confirmatoryUltrasounds)
     {
         try {
-            return $confirmatoryUltrasounds . map(function ($confirmatoryUltrasound) {
+            return $confirmatoryUltrasounds->map(function ($confirmatoryUltrasound) {
                 return $this->toMapSingle($confirmatoryUltrasound);
             });
         } catch (\Exception $e) {
@@ -72,21 +72,24 @@ class ConfirmatoryUltrasoundService
     public function All($request)
     {
         try {
-            $bovineControl = $this->controlBovineRepository->find($request->input('bovine-controls_id'));
+            $bovineControl = $this->controlBovineRepository->find($request->input('control_bovine_id'));
 
             if (!$bovineControl) {
                 return ['error' => 'Bovine Control not found'];
             }
 
-            $ultrasounds = $bovineControl->confirmatoryUltrasounds();
+            $confirmatoryUltrasounds = $bovineControl->confirmatory_ultrasounds;
 
-            if (!$ultrasounds) {
-                return ['error' => 'Implant Retrieval not found'];
+            if (!$confirmatoryUltrasounds || $confirmatoryUltrasounds->isEmpty()) {
+                return [
+                    'message' => 'No Confirmatory Ultrasound records found',
+                    'confirmatoryUltrasounds' => []
+                ];
             }
-            
+
             return [
-                'message' => 'Confirmatory_ultrasound retrievals successfully',
-                'confirmatory_ultrasound' => $this->toMap($ultrasounds)
+                'message' => 'confirmatoryUltrasounds retrievals successfully',
+                'confirmatoryUltrasounds' => $this->toMap($confirmatoryUltrasounds)
             ];
 
         } catch (\Exception $e) {
@@ -105,7 +108,7 @@ class ConfirmatoryUltrasoundService
 
             return [
                 'message' => 'Confirmatory Ultrasound updated successfully',
-                'confirmatory_ultrasound' => $this->toMapSingle($confirmatoryUltrasound)
+                'confirmatoryUltrasounds' => $this->toMapSingle($confirmatoryUltrasound)
             ];
 
         } catch (\Exception $e) {

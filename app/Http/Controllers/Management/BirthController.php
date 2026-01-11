@@ -35,7 +35,7 @@ class BirthController extends Controller
     {
         $birthUpdate = $this->birthService->update($request);
         
-        if(asset($birthUpdate['error'])){
+        if(isset($birthUpdate['error'])){
             return response()->json(
                 [
                     'error' => $birthUpdate['error']
@@ -50,7 +50,7 @@ class BirthController extends Controller
     {
         $birth = $this->birthService->get($request);
         
-        if(asset($birth['error'])){
+        if(isset($birth['error'])){
             return response()->json(
                 [
                     'error' => $birth['error']

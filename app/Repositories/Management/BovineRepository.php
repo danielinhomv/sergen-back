@@ -44,4 +44,9 @@ class BovineRepository
         return Bovine::create($data);
     }
 
+    public function find($id)
+    {
+        return Bovine::find($id);
+    }
+
 }

@@ -63,7 +63,7 @@ public function create($request)
                 'weight'      => $request->input('birth_weight'),
                 'rgd'         => $request->input('rgd'),
                 'property_id' => $request->input('property_id'),
-                'mother_id'   => $request->input('bovine_id'),
+                'mother_id'   => $bovineControl->bovine_id,
             ];
 
             $bovine = $this->bovineRepository->createRaw($bovineData);
@@ -81,7 +81,7 @@ public function create($request)
         $birthData = [
             'type_of_birth'     => $typeOfBirth,
             'control_bovine_id' => $request->input('control_bovine_id'),
-            'bovine_id'         => $bovine?->id,
+            'bovine_id'         => $bovine ? $bovine->id : null,
         ];
 
         $birth = $this->birthRepository->createRaw($birthData);
@@ -126,16 +126,18 @@ public function create($request)
             $birth = $bovineControl->birth; // Asumiendo relación HasOne en el modelo
 
             if (!$birth) {
-                return ['error' => 'Birth record not found'];
+                return [
+                    'message' => 'No Birth record found for this Bovine Control',
+                    'birth' => null     
+                ];
             }
 
             // IMPORTANTE: Obtenemos el bovino (cría) asociado al parto
-            $bovine = $birth->bovine;
+            $bovine = $this->bovineRepository->find($birth->bovine_id);
 
             return [
-                'status' => 'success',
                 'message' => 'Birth Retrieved successfully',
-                'data' => $this->toMapSingle($birth, $bullFather, $bovine)
+                'birth' => $this->toMapSingle($birth, $bullFather, $bovine)
             ];
         } catch (Exception $e) {
             return ['error' => 'Exception occurred: ' . $e->getMessage()];

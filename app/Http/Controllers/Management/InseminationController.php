@@ -48,9 +48,9 @@ class InseminationController extends Controller
         return response()->json($inseminationDeleted);
     }
 
-    public function update($id, Request $request)
+    public function update(Request $request)
     {
-        $inseminationUpdated = $this->inseminationService->update($id, $request);
+        $inseminationUpdated = $this->inseminationService->update($request);
 
         if (isset($inseminationUpdated['error'])) {
             return response()->json(['error' => $inseminationUpdated['error']], 400);

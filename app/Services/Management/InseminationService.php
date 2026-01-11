@@ -123,12 +123,11 @@ class InseminationService
         }
     }
 
-    public function update($id, $request)
+    public function update($request)
     {
         try {
 
-            $insemination = $this->inseminationRepository->findById($id);
-
+            $insemination = $this->inseminationRepository->findById($request->input('id'));
             $insemination->update($request->all());
 
             $bovineControl = $this->controlBovineRepository->find($insemination->control_bovine_id);
