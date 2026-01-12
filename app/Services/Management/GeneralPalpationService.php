@@ -58,7 +58,7 @@ class GeneralPalpationService
                 return [
                     'message' => 'No General palpation data found',
                     'generalPalpation' => null
-                ]; //no debes devolver error si no hay datos
+                ];
             }
             return
                 [

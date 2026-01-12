@@ -55,8 +55,11 @@ class ImplantRetrievalsService
             $implantRetrieval = $bovineControl->implant_retrieval;
 
             if (!$implantRetrieval) {
-                return ['error' => 'Implant Retrieval not found'];
-            }
+                //si no hay datos devolvemos null
+                return [
+                    'message' => 'No Implant_retrieval data found',
+                    'implant_retrieval' => null
+                ];}
             return
                 [
                     'message' => 'Implant_retrieval retrieved successfully',
@@ -95,9 +98,9 @@ class ImplantRetrievalsService
                 'id' => $implantRetrieval->id,
                 'status' => $implantRetrieval->status,
                 'work_team' => $implantRetrieval->work_team,
-                'used_product_summary' => $implantRetrieval->used_product_summary,
+                'used_products_summary' => $implantRetrieval->used_products_summary,
                 'date' => $implantRetrieval->date
-            ];
+            ];  
         } catch (\Exception $e) {
             return ['error' => 'Exception occurred: ' . $e->getMessage()];
         }
