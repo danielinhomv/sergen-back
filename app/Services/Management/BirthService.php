@@ -24,88 +24,90 @@ class BirthService
         $this->bovineRepository = $bovineRepository;
     }
 
-public function create($request)
-{
-    DB::beginTransaction();
+    public function create($request)
+    {
+        DB::beginTransaction();
 
-    try {
+        try {
 
-        // 1. Bloquear el control bovino (evita partos duplicados)
-        $bovineControl = $this->controlBovineRepository
-            ->lockForUpdate($request->input('control_bovine_id'));
+            $controlBovineId = $request->input('control_bovine_id');
 
-        if (!$bovineControl) {
-            return ['error' => 'Bovine Control not found'];
-        }
+            // 1. Bloquear el control bovino (evita partos duplicados)
+            $bovineControl = $this->controlBovineRepository
+                ->lockForUpdate($controlBovineId);
 
-        if ($bovineControl->birth) {
-            return ['error' => 'Birth record already exists for this Bovine Control'];
-        }
-
-        $typeOfBirth = $request->input('type_of_birth');
-
-        // 2. Crear cría solo si nació viva
-        if (in_array($typeOfBirth, ['normal', 'premeture'])) {
-
-            // 2.1 Validar RGD dentro de la transacción
-            $rgdExists = $this->bovineRepository->existRgd(
-                $request->input('rgd'),
-                $request->input('property_id')
-            );
-
-            if ($rgdExists) {
-                return ['error' => 'Rgd already exists for another bovine in the property'];
+            if (!$bovineControl) {
+                return ['error' => 'Bovine Control not found'];
             }
 
-            $bovineData = [
-                'birthdate'   => $request->input('birthdate'),
-                'sex'         => $request->input('sex'),
-                'weight'      => $request->input('birth_weight'),
-                'rgd'         => $request->input('rgd'),
-                'property_id' => $request->input('property_id'),
-                'mother_id'   => $bovineControl->bovine_id,
+            if ($bovineControl->birth) {
+                return ['error' => 'Birth record already exists for this Bovine Control'];
+            }
+
+            $typeOfBirth = $request->input('type_of_birth');
+
+            // 2. Crear cría solo si nació viva
+            if (in_array($typeOfBirth, ['normal', 'premeture'])) {
+
+                // 2.1 Validar RGD dentro de la transacción
+                $rgdExists = $this->bovineRepository->existRgd(
+                    $request->input('rgd'),
+                    $request->input('property_id')
+                );
+
+                if ($rgdExists) {
+                    return ['error' => 'Rgd already exists for another bovine in the property'];
+                }
+
+                $bovineData = [
+                    'birthdate'   => $request->input('birthdate'),
+                    'sex'         => $request->input('sex'),
+                    'weight'      => $request->input('birth_weight'),
+                    'rgd'         => $request->input('rgd'),
+                    'property_id' => $request->input('property_id'),
+                    'mother_id'   => $bovineControl->bovine_id,
+                ];
+
+                $bovine = $this->bovineRepository->createRaw($bovineData);
+
+                if (!$bovine) {
+                    throw new \Exception('Failed to create bovine');
+                }
+            } else {
+                // Abort o stillbirth → no hay cría
+                $bovine = null;
+            }
+
+            // 3. Crear el parto
+            $birthData = [
+                'type_of_birth'     => $typeOfBirth,
+                'control_bovine_id' => $controlBovineId,
+                'bovine_id'         => $bovine ? $bovine->id : null,
             ];
 
-            $bovine = $this->bovineRepository->createRaw($bovineData);
+            //busca de la 
 
-            if (!$bovine) {
-                throw new \Exception('Failed to create bovine');
+            $birth = $this->birthRepository->createRaw($birthData);
+
+            if (!$birth) {
+                throw new \Exception('Failed to create birth record');
             }
 
-        } else {
-            // Abort o stillbirth → no hay cría
-            $bovine = null;
+            DB::commit();
+
+            return [
+                'message' => 'Birth registered successfully',
+                'birth'   => $this->toMapSingle($birth, null, $bovine)
+            ];
+        } catch (\Throwable $e) {
+            DB::rollBack();
+
+            return [
+                'error'  => 'Transaction failed',
+                'detail' => $e->getMessage()
+            ];
         }
-
-        // 3. Crear el parto
-        $birthData = [
-            'type_of_birth'     => $typeOfBirth,
-            'control_bovine_id' => $request->input('control_bovine_id'),
-            'bovine_id'         => $bovine ? $bovine->id : null,
-        ];
-
-        $birth = $this->birthRepository->createRaw($birthData);
-
-        if (!$birth) {
-            throw new \Exception('Failed to create birth record');
-        }
-
-        DB::commit();
-
-        return [
-            'message' => 'Birth registered successfully',
-            'birth'   => $this->toMapSingle($birth, null, $bovine)
-        ];
-
-    } catch (\Throwable $e) {
-        DB::rollBack();
-
-        return [
-            'error'  => 'Transaction failed',
-            'detail' => $e->getMessage()
-        ];
     }
-}
 
 
 
@@ -113,32 +115,41 @@ public function create($request)
     public function get($request)
     {
         try {
-            $bovineControl = $this->controlBovineRepository->find($request->input('control_bovine_id'));
+
+            $controlBovineId = $request->input('control_bovine_id');
+
+            $bovineControl = $this->controlBovineRepository->find($controlBovineId);
 
             if (!$bovineControl) {
                 return ['error' => 'Bovine Control not found'];
             }
 
-            // Obtener el toro padre a través de la relación de inseminación
-            $bullFather = $bovineControl->first_insemination->bull ?? null;
 
-            // Obtener el registro del parto
-            $birth = $bovineControl->birth; // Asumiendo relación HasOne en el modelo
+            $birth = $bovineControl->birth;
 
             if (!$birth) {
                 return [
                     'message' => 'No Birth record found for this Bovine Control',
-                    'birth' => null     
+                    'birth' => null
                 ];
             }
 
             // IMPORTANTE: Obtenemos el bovino (cría) asociado al parto
             $bovine = $this->bovineRepository->find($birth->bovine_id);
 
+            $bullFatherName = $this->birthRepository->getBullNameByControlBovineId($controlBovineId);
+            
+            if (!$bullFatherName) {
+                return [
+                    'error' => 'no se detecto un padre'
+                ];
+            }
+            
             return [
                 'message' => 'Birth Retrieved successfully',
-                'birth' => $this->toMapSingle($birth, $bullFather, $bovine)
+                'birth' => $this->toMapSingle($birth, $bullFatherName, $bovine)
             ];
+
         } catch (Exception $e) {
             return ['error' => 'Exception occurred: ' . $e->getMessage()];
         }
@@ -176,7 +187,7 @@ public function create($request)
         });
     }
 
-    private function toMapSingle($birth, $bullFather = null, $bovine = null)
+    private function toMapSingle($birth, $bullFatherName = null, $bovine = null)
     {
         // Validamos que el objeto bovino exista para evitar errores de null
         return [
@@ -185,7 +196,7 @@ public function create($request)
             'sex'           => $bovine ? $bovine->sex : null,
             'birth_weight'  => $bovine ? $bovine->weight : null,
             'rgd'           => $bovine ? $bovine->rgd : null,
-            'bull_father'   => $bullFather->name ?? 'Unknown',
+            'bull_father'   => $bullFatherName ?? 'solo se mostrara en el parto',
             'type_of_birth' => $birth->type_of_birth,
         ];
     }

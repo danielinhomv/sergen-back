@@ -9,10 +9,6 @@ class Bull extends Model
     public $timestamps = false;
     protected $guarded = [];
 
-    public function births()
-    {
-        return $this->hasMany(Bull::class);
-    }
 
     public function inseminations()
     {

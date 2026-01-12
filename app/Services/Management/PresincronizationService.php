@@ -71,7 +71,11 @@ class PresincronizationService
             $presincronization = $bovineControl->pre_sincronization;
 
             if (!$presincronization) {
-                return ['error' => 'No Presincronizations found for this Bovine Control'];
+                //si no hay datos devolvemos null
+                return [
+                    'message' => 'No presincronization data found',
+                    'presincronization' => null
+                ];
             }
 
             return

@@ -3,6 +3,7 @@
 namespace App\Repositories\Management;
 
 use App\Models\Birth;
+use App\Models\Insemination;
 
 class BirthRepository
 {
@@ -21,5 +22,14 @@ class BirthRepository
             return $birth;
         }
         return null;
+    }
+
+    public function getBullNameByControlBovineId($controlBovineId)
+    {
+        $lastInsemination = Insemination::where('control_bovine_id', $controlBovineId)
+            ->orderBy('date', 'desc')
+            ->first();
+
+        return $lastInsemination?->bull?->name;
     }
 }

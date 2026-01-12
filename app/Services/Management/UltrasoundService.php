@@ -53,7 +53,7 @@ class UltrasoundService
                 'protocol_details' => $ultrasound->protocol_details,
                 'used_products_summary' => $ultrasound->used_products_summary,
                 'work_team' => $ultrasound->work_team,
-                'regufo' => $ultrasound->regufo,
+                'refugo' => $ultrasound->refugo,
                 'date' => $ultrasound->date
             ];
         } catch (\Exception $e) {
@@ -73,7 +73,11 @@ class UltrasoundService
             $ultrasound = $bovineControl->ultrasound;
 
             if (!$ultrasound) {
-                return ['error' => 'Implant Retrieval not found'];
+                //si no hay datos devolvemos null
+                return [
+                    'message' => 'No Ultrasound data found',
+                    'ultrasound' => null
+                ];
             }
 
             return
