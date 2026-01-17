@@ -3,26 +3,22 @@
 namespace App\Repositories\Report;
 
 use App\Models\Control_bovine;
-use App\Models\Insemination;
+use App\Models\Implant_retrieval;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
-class InseminationReportRepository
+class ImplantRetrievalReportRepository
 {
     public function fetchRows(array $filters): Collection
     {
-        $q = Insemination::query()
+        $q = Implant_retrieval::query()
             ->select([
-                'inseminations.id',
-                'inseminations.control_bovine_id',
-                'inseminations.date',
-                'inseminations.bull_id',
-                'bulls.name as bull_name',
-
-                'inseminations.heat_quality',
-                'inseminations.body_condition_score',
-                'inseminations.observation',
-                'inseminations.others',
+                'implant_retrievals.id',
+                'implant_retrievals.control_bovine_id',
+                'implant_retrievals.status', // retrieved | lost
+                'implant_retrievals.used_products_summary',
+                'implant_retrievals.work_team',
+                'implant_retrievals.date',
 
                 'control_bovines.control_id',
                 'control_bovines.bovine_id',
@@ -33,14 +29,13 @@ class InseminationReportRepository
 
                 'properties.name as property_name',
             ])
-            ->join('control_bovines', 'control_bovines.id', '=', 'inseminations.control_bovine_id')
+            ->join('control_bovines', 'control_bovines.id', '=', 'implant_retrievals.control_bovine_id')
             ->join('bovines', 'bovines.id', '=', 'control_bovines.bovine_id')
-            ->leftJoin('properties', 'properties.id', '=', 'bovines.property_id')
-            ->join('bulls', 'bulls.id', '=', 'inseminations.bull_id');
+            ->leftJoin('properties', 'properties.id', '=', 'bovines.property_id');
 
         $this->applyCommonFilters($q, $filters);
 
-        return $q->orderByDesc('inseminations.date')->get();
+        return $q->orderByDesc('implant_retrievals.date')->get();
     }
 
     public function countHatoObjetivo(array $filters): ?int
@@ -73,13 +68,16 @@ class InseminationReportRepository
         $end = $filters['date_end'] ?? null;
 
         if ($type === 'today') {
-            $q->whereDate('inseminations.date', now()->toDateString());
+            $q->whereDate('implant_retrievals.date', now()->toDateString());
         } elseif ($type === 'from' && $start) {
-            $q->whereDate('inseminations.date', '>=', $start);
+            $q->whereDate('implant_retrievals.date', '>=', $start);
         } elseif ($type === 'until' && $end) {
-            $q->whereDate('inseminations.date', '<=', $end);
+            $q->whereDate('implant_retrievals.date', '<=', $end);
         } elseif ($type === 'range' && $start && $end) {
-            $q->whereBetween('inseminations.date', [$start, $end]); // date es DATE, no datetime
+            $q->whereBetween('implant_retrievals.date', [
+                $start . ' 00:00:00',
+                $end . ' 23:59:59',
+            ]);
         }
     }
 }

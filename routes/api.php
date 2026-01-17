@@ -14,7 +14,17 @@ use App\Http\Controllers\Management\PresincronizationController;
 use App\Http\Controllers\Management\PropertyController;
 use App\Http\Controllers\Management\UltrasoundController;
 use App\Http\Controllers\Report\BovineReportController;
+//reportes
+use App\Http\Controllers\Report\DashboardGeneralReportController;
+
+use App\Http\Controllers\Report\PresynchronizationReportController;
+use App\Http\Controllers\Report\UltrasoundReportController;
+use App\Http\Controllers\Report\ImplantRetrievalReportController;
 use App\Http\Controllers\Report\InseminationReportController;
+use App\Http\Controllers\Report\ConfirmatoryUltrasoundReportController;
+use App\Http\Controllers\Report\GeneralPregnancyDiagnosisReportController;
+use App\Http\Controllers\Report\BirthReportController;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -23,6 +33,7 @@ use Illuminate\Support\Facades\Route;
 | Rutas Públicas
 |--------------------------------------------------------------------------
 */
+
 Route::post('/user/login', [AuthController::class, 'login']);
 
 /*
@@ -59,16 +70,16 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::prefix('bovine')->group(function () {
             Route::post('/create', [BovineController::class, 'create']);
             Route::post('/all',  [BovineController::class, 'all']);
-            Route::post('/update', [BovineController::class , 'update']);
-            Route::post('/delete', [BovineController::class , 'delete']);
-            Route::post('/get-by-serie', [BovineController::class , 'getBySerie']);
+            Route::post('/update', [BovineController::class, 'update']);
+            Route::post('/delete', [BovineController::class, 'delete']);
+            Route::post('/get-by-serie', [BovineController::class, 'getBySerie']);
         });
 
         /* BULL */
         Route::prefix('bull')->group(function () {
-            Route::post('/create', [BullController::class, 'create']);   
-            Route::post('/all', [BullController::class, 'all']);        
-            Route::post('/update', [BullController::class, 'update']); 
+            Route::post('/create', [BullController::class, 'create']);
+            Route::post('/all', [BullController::class, 'all']);
+            Route::post('/update', [BullController::class, 'update']);
             Route::post('/delete', [BullController::class, 'delete']);
         });
 
@@ -112,7 +123,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
         /* PRESINCRONIZACION */
         Route::prefix('pre-sincronizacion')->group(function () {
-            Route::post('/create', [PresincronizationController::class, 'create']); 
+            Route::post('/create', [PresincronizationController::class, 'create']);
             Route::post('/get', [PresincronizationController::class, 'get']);
             Route::post('/update', [PresincronizationController::class, 'update']);
         });
@@ -139,16 +150,35 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::prefix('control-bovine')->group(function () {
             Route::post('/create', [ControlBovineController::class, 'create']);
         });
-
     });
+});
 
-    /* ===============================
+/* ===============================
        REPORTES
     =============================== */
-    Route::prefix('report')->group(function () {
-        Route::post('/insemination', [InseminationReportController::class, 'getInseminationReport']);
-        Route::post('/bovine-history', [BovineReportController::class, 'generateBovineHistoryReport']);
-        Route::post('/property-bovine-history', [BovineReportController::class, 'generatePropertyBovineHistoryReport']);
-    });
+Route::prefix('report')->group(function () {
 
+    Route::post('/bovine-history', [BovineReportController::class, 'generateBovineHistoryReport']);
+    Route::post('/property-bovine-history', [BovineReportController::class, 'generatePropertyBovineHistoryReport']);
+
+    // DASHBOARD
+    Route::post('/dashboard', [DashboardGeneralReportController::class, 'index']);
+
+    // IATF - LISTS
+    Route::post('/presynchronization', [PresynchronizationReportController::class, 'index']);
+    Route::post('/ultrasound', [UltrasoundReportController::class, 'index']);
+    Route::post('/implant-retrieval', [ImplantRetrievalReportController::class, 'index']);
+    Route::post('/insemination', [InseminationReportController::class, 'index']);
+    Route::post('/confirmatory-ultrasound', [ConfirmatoryUltrasoundReportController::class, 'index']);
+    Route::post('/general-palpation', [GeneralPregnancyDiagnosisReportController::class, 'index']);
+    Route::post('/birth', [BirthReportController::class, 'index']);
+
+    // IATF - PDF (export)
+    Route::post('/presynchronization/export/pdf', [PresynchronizationReportController::class, 'export']);
+    Route::post('/ultrasound/export/pdf', [UltrasoundReportController::class, 'export']);
+    Route::post('/implant-retrieval/export/pdf', [ImplantRetrievalReportController::class, 'export']);
+    Route::post('/insemination/export/pdf', [InseminationReportController::class, 'export']);
+    Route::post('/confirmatory-ultrasound/export/pdf', [ConfirmatoryUltrasoundReportController::class, 'export']);
+    Route::post('/general-palpation/export/pdf', [GeneralPregnancyDiagnosisReportController::class, 'export']);
+    Route::post('/birth/export/pdf', [BirthReportController::class, 'export']);
 });
