@@ -11,7 +11,8 @@ class GeneralPregnancyDiagnosisReportStrategy extends BaseReportService implemen
 {
     public function __construct(
         private readonly GeneralPregnancyDiagnosisReportRepository $repo
-    ) {}
+    ) {
+    }
 
     public function name(): string
     {
@@ -41,15 +42,16 @@ class GeneralPregnancyDiagnosisReportStrategy extends BaseReportService implemen
         $totalAnimals = $rows->pluck('control_bovine_id')->unique()->count(); // diagnósticos (por animal)
 
         $pregnant = $this->countUniqueByStatus($rows, 'pregnant');
-        $empty    = $this->countUniqueByStatus($rows, 'empty');
-        $discard  = $this->countUniqueByStatus($rows, 'discard');
-        $abort    = $this->countUniqueByStatus($rows, 'abort');
+        $empty = $this->countUniqueByStatus($rows, 'empty');
+        $discard = $this->countUniqueByStatus($rows, 'discard');
+        $abort = $this->countUniqueByStatus($rows, 'abort');
 
         // % preñez (lo que pidió: “tasa confirmación” -> % preñez)
         $pregnancyPct = $this->pct($pregnant, $totalAnimals);
 
         // Faltantes vs hato objetivo (si hay control_id)
-        $faltantes = $faltantesPct = $coberturaPct = null;
+        // $faltantes = $faltantesPct = $coberturaPct = null;
+        $faltantes = $faltantesPct = $coberturaPct = 0;
         if (!is_null($hatoObjetivo) && $hatoObjetivo > 0) {
             $faltantes = max($hatoObjetivo - $totalAnimals, 0);
             $coberturaPct = $this->pct($totalAnimals, $hatoObjetivo);
@@ -63,14 +65,14 @@ class GeneralPregnancyDiagnosisReportStrategy extends BaseReportService implemen
         $pregByHeat = $this->rateByHeatQuality($rows);
 
         $details = $rows->map(fn($r) => [
-            'general_palpation_id' => (int)$r->id,
-            'control_bovine_id' => (int)$r->control_bovine_id,
-            'bovine_id' => (int)$r->bovine_id,
+            'general_palpation_id' => (int) $r->id,
+            'control_bovine_id' => (int) $r->control_bovine_id,
+            'bovine_id' => (int) $r->bovine_id,
             'serie' => $r->serie,
             'rgd' => $r->rgd,
-            'property_id' => $r->property_id ? (int)$r->property_id : null,
+            'property_id' => $r->property_id ? (int) $r->property_id : null,
             'property_name' => $r->property_name,
-            'control_id' => $r->control_id ? (int)$r->control_id : null,
+            'control_id' => $r->control_id ? (int) $r->control_id : null,
 
             'date' => $r->date,
             'status' => $r->status, // pregnant/empty/discard/abort
@@ -78,7 +80,7 @@ class GeneralPregnancyDiagnosisReportStrategy extends BaseReportService implemen
 
             // cruzado con IA
             'insemination_date' => $r->insemination_date,
-            'bull_id' => $r->bull_id ? (int)$r->bull_id : null,
+            'bull_id' => $r->bull_id ? (int) $r->bull_id : null,
             'bull_name' => $r->bull_name,
             'heat_quality_raw' => $r->heat_quality,
             'heat_quality' => $this->heatLabel($r->heat_quality),
@@ -92,9 +94,9 @@ class GeneralPregnancyDiagnosisReportStrategy extends BaseReportService implemen
                 'total_records' => $totalRecords,
 
                 'pregnant' => ['count' => $pregnant, 'pct' => $this->pct($pregnant, $totalAnimals)],
-                'empty'    => ['count' => $empty,    'pct' => $this->pct($empty,    $totalAnimals)],
-                'discard'  => ['count' => $discard,  'pct' => $this->pct($discard,  $totalAnimals)],
-                'abort'    => ['count' => $abort,    'pct' => $this->pct($abort,    $totalAnimals)],
+                'empty' => ['count' => $empty, 'pct' => $this->pct($empty, $totalAnimals)],
+                'discard' => ['count' => $discard, 'pct' => $this->pct($discard, $totalAnimals)],
+                'abort' => ['count' => $abort, 'pct' => $this->pct($abort, $totalAnimals)],
 
                 'pregnancy_pct' => $pregnancyPct,
 
@@ -106,9 +108,9 @@ class GeneralPregnancyDiagnosisReportStrategy extends BaseReportService implemen
             // Tabla de estados
             'status_table' => [
                 ['status' => 'pregnant', 'count' => $pregnant, 'pct' => $this->pct($pregnant, $totalAnimals)],
-                ['status' => 'empty',    'count' => $empty,    'pct' => $this->pct($empty,    $totalAnimals)],
-                ['status' => 'discard',  'count' => $discard,  'pct' => $this->pct($discard,  $totalAnimals)],
-                ['status' => 'abort',    'count' => $abort,    'pct' => $this->pct($abort,    $totalAnimals)],
+                ['status' => 'empty', 'count' => $empty, 'pct' => $this->pct($empty, $totalAnimals)],
+                ['status' => 'discard', 'count' => $discard, 'pct' => $this->pct($discard, $totalAnimals)],
+                ['status' => 'abort', 'count' => $abort, 'pct' => $this->pct($abort, $totalAnimals)],
             ],
 
             'distributions' => [
@@ -132,7 +134,8 @@ class GeneralPregnancyDiagnosisReportStrategy extends BaseReportService implemen
 
     private function heatLabel(?string $raw): ?string
     {
-        if (!$raw) return null;
+        if (!$raw)
+            return null;
         return match ($raw) {
             'well' => 'bueno',
             'regular' => 'regular',
@@ -150,9 +153,10 @@ class GeneralPregnancyDiagnosisReportStrategy extends BaseReportService implemen
         $pregByGroup = [];
 
         foreach ($rows as $r) {
-            $animalId = (int)$r->control_bovine_id;
-            $g = trim((string)($r->{$groupField} ?? ''));
-            if ($g === '') $g = 'SIN_DATO';
+            $animalId = (int) $r->control_bovine_id;
+            $g = trim((string) ($r->{$groupField} ?? ''));
+            if ($g === '')
+                $g = 'SIN_DATO';
 
             $totalByGroup[$g][$animalId] = true;
 
@@ -184,7 +188,7 @@ class GeneralPregnancyDiagnosisReportStrategy extends BaseReportService implemen
         $pregBy = [];
 
         foreach ($rows as $r) {
-            $animalId = (int)$r->control_bovine_id;
+            $animalId = (int) $r->control_bovine_id;
             $label = $this->heatLabel($r->heat_quality);
             $label = $label ? trim($label) : 'SIN_DATO';
 

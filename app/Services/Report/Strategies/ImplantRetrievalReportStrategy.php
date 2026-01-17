@@ -11,7 +11,8 @@ class ImplantRetrievalReportStrategy extends BaseReportService implements Report
 {
     public function __construct(
         private readonly ImplantRetrievalReportRepository $repo
-    ) {}
+    ) {
+    }
 
     public function name(): string
     {
@@ -45,7 +46,8 @@ class ImplantRetrievalReportStrategy extends BaseReportService implements Report
         $lost = $rows->where('status', 'lost')
             ->pluck('control_bovine_id')->unique()->count();
 
-        $faltantes = $faltantesPct = $coberturaPct = null;
+        // $faltantes = $faltantesPct = $coberturaPct = null;
+        $faltantes = $faltantesPct = $coberturaPct = 0;
         if (!is_null($hatoObjetivo) && $hatoObjetivo > 0) {
             $faltantes = max($hatoObjetivo - $totalAnimals, 0);
             $coberturaPct = $this->pct($totalAnimals, $hatoObjetivo);
@@ -84,9 +86,9 @@ class ImplantRetrievalReportStrategy extends BaseReportService implements Report
             ],
 
             'details' => $rows->map(fn($r) => [
-                'implant_retrieval_id' => (int)$r->id,
-                'control_bovine_id' => (int)$r->control_bovine_id,
-                'bovine_id' => (int)$r->bovine_id,
+                'implant_retrieval_id' => (int) $r->id,
+                'control_bovine_id' => (int) $r->control_bovine_id,
+                'bovine_id' => (int) $r->bovine_id,
                 'serie' => $r->serie,
                 'rgd' => $r->rgd,
                 'property_id' => $r->property_id,
@@ -105,13 +107,15 @@ class ImplantRetrievalReportStrategy extends BaseReportService implements Report
         $map = [];
 
         foreach ($rows as $r) {
-            $animalId = (int)$r->control_bovine_id;
-            $raw = trim((string)$r->used_products_summary);
-            if ($raw === '') continue;
+            $animalId = (int) $r->control_bovine_id;
+            $raw = trim((string) $r->used_products_summary);
+            if ($raw === '')
+                continue;
 
             foreach (preg_split('/[,\n;]+/', $raw) as $p) {
                 $p = trim($p);
-                if ($p === '') continue;
+                if ($p === '')
+                    continue;
                 $map[$p][$animalId] = true;
             }
         }

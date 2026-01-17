@@ -11,7 +11,8 @@ class BirthReportStrategy extends BaseReportService implements ReportStrategy
 {
     public function __construct(
         private readonly BirthReportRepository $repo
-    ) {}
+    ) {
+    }
 
     public function name(): string
     {
@@ -57,7 +58,8 @@ class BirthReportStrategy extends BaseReportService implements ReportStrategy
         $female = $calfRows->where('calf_sex', 'female')->count();
 
         // Faltantes vs hato objetivo (si hay control_id)
-        $faltantes = $faltantesPct = $coberturaPct = null;
+        // $faltantes = $faltantesPct = $coberturaPct = null;
+        $faltantes = $faltantesPct = $coberturaPct = 0;
         if (!is_null($hatoObjetivo) && $hatoObjetivo > 0) {
             $faltantes = max($hatoObjetivo - $mothersWithBirth, 0);
             $coberturaPct = $this->pct($mothersWithBirth, $hatoObjetivo);
@@ -68,20 +70,20 @@ class BirthReportStrategy extends BaseReportService implements ReportStrategy
         // Con esta BD no hay un campo directo de “apta para destetar / apta para nuevo servicio”.
         // Dejamos un bloque informativo en el detalle para que el front pueda marcarlo si luego agregas esa lógica.
         $details = $rows->map(fn($r) => [
-            'birth_id' => (int)$r->id,
-            'control_bovine_id' => (int)$r->control_bovine_id,
-            'control_id' => $r->control_id ? (int)$r->control_id : null,
+            'birth_id' => (int) $r->id,
+            'control_bovine_id' => (int) $r->control_bovine_id,
+            'control_id' => $r->control_id ? (int) $r->control_id : null,
 
-            'property_id' => $r->mother_property_id ? (int)$r->mother_property_id : null,
+            'property_id' => $r->mother_property_id ? (int) $r->mother_property_id : null,
             'property_name' => $r->property_name,
 
             'type_of_birth' => $r->type_of_birth,
 
-            'mother_bovine_id' => $r->mother_bovine_id ? (int)$r->mother_bovine_id : null,
+            'mother_bovine_id' => $r->mother_bovine_id ? (int) $r->mother_bovine_id : null,
             'mother_serie' => $r->mother_serie,
             'mother_rgd' => $r->mother_rgd,
 
-            'calf_id' => $r->calf_id ? (int)$r->calf_id : null,
+            'calf_id' => $r->calf_id ? (int) $r->calf_id : null,
             'calf_serie' => $r->calf_serie,
             'calf_rgd' => $r->calf_rgd,
             'calf_sex' => $r->calf_sex,

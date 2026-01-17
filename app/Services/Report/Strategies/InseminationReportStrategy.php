@@ -11,7 +11,8 @@ class InseminationReportStrategy extends BaseReportService implements ReportStra
 {
     public function __construct(
         private readonly InseminationReportRepository $repo
-    ) {}
+    ) {
+    }
 
     public function name(): string
     {
@@ -40,7 +41,8 @@ class InseminationReportStrategy extends BaseReportService implements ReportStra
         $inseminatedAnimals = $rows->pluck('control_bovine_id')->unique()->count();
         $totalRecords = $rows->count();
 
-        $faltantes = $faltantesPct = $coberturaPct = null;
+        // $faltantes = $faltantesPct = $coberturaPct = null;
+        $faltantes = $faltantesPct = $coberturaPct = 0;
         if (!is_null($hatoObjetivo) && $hatoObjetivo > 0) {
             $faltantes = max($hatoObjetivo - $inseminatedAnimals, 0);
             $coberturaPct = $this->pct($inseminatedAnimals, $hatoObjetivo);
@@ -57,24 +59,24 @@ class InseminationReportStrategy extends BaseReportService implements ReportStra
         $conceptionPct = !is_null($coberturaPct) ? $coberturaPct : 100.0;
 
         $details = $rows->map(fn($r) => [
-            'insemination_id' => (int)$r->id,
-            'control_bovine_id' => (int)$r->control_bovine_id,
-            'bovine_id' => (int)$r->bovine_id,
+            'insemination_id' => (int) $r->id,
+            'control_bovine_id' => (int) $r->control_bovine_id,
+            'bovine_id' => (int) $r->bovine_id,
             'serie' => $r->serie,
             'rgd' => $r->rgd,
-            'property_id' => $r->property_id ? (int)$r->property_id : null,
+            'property_id' => $r->property_id ? (int) $r->property_id : null,
             'property_name' => $r->property_name,
-            'control_id' => $r->control_id ? (int)$r->control_id : null,
+            'control_id' => $r->control_id ? (int) $r->control_id : null,
 
             'date' => $r->date,
-            'bull_id' => (int)$r->bull_id,
+            'bull_id' => (int) $r->bull_id,
             'bull_name' => $r->bull_name,
 
             // raw y label
             'heat_quality_raw' => $r->heat_quality,
             'heat_quality' => $this->heatLabel($r->heat_quality),
 
-            'body_condition_score' => (float)$r->body_condition_score,
+            'body_condition_score' => (float) $r->body_condition_score,
             'observation' => $r->observation,
             'others' => $r->others,
         ])->values();
@@ -104,7 +106,8 @@ class InseminationReportStrategy extends BaseReportService implements ReportStra
 
     private function heatLabel(?string $raw): ?string
     {
-        if (!$raw) return null;
+        if (!$raw)
+            return null;
         return match ($raw) {
             'well' => 'bueno',
             'regular' => 'regular',
@@ -122,10 +125,12 @@ class InseminationReportStrategy extends BaseReportService implements ReportStra
         ];
 
         foreach ($rows as $r) {
-            $animalId = (int)$r->control_bovine_id;
+            $animalId = (int) $r->control_bovine_id;
             $label = $this->heatLabel($r->heat_quality);
-            if (!$label) continue;
-            if (!isset($map[$label])) $map[$label] = [];
+            if (!$label)
+                continue;
+            if (!isset($map[$label]))
+                $map[$label] = [];
             $map[$label][$animalId] = true;
         }
 

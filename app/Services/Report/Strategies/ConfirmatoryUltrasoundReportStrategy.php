@@ -11,7 +11,8 @@ class ConfirmatoryUltrasoundReportStrategy extends BaseReportService implements 
 {
     public function __construct(
         private readonly ConfirmatoryUltrasoundReportRepository $repo
-    ) {}
+    ) {
+    }
 
     public function name(): string
     {
@@ -41,8 +42,8 @@ class ConfirmatoryUltrasoundReportStrategy extends BaseReportService implements 
         $totalAnimals = $rows->pluck('control_bovine_id')->unique()->count(); // total ecografías (por animal)
 
         $pregnant = $this->countUniqueByStatus($rows, 'pregnant');
-        $empty    = $this->countUniqueByStatus($rows, 'empty');
-        $discart  = $this->countUniqueByStatus($rows, 'discart');
+        $empty = $this->countUniqueByStatus($rows, 'empty');
+        $discart = $this->countUniqueByStatus($rows, 'discart');
 
         // Refugos (texto no vacío)
         $refugos = $rows->filter(fn($r) => $this->notEmpty($r->refugo))
@@ -64,7 +65,8 @@ class ConfirmatoryUltrasoundReportStrategy extends BaseReportService implements 
         $pregnancyPct = $this->pct($pregnant, $totalAnimals);
 
         // Faltantes vs hato objetivo (si hay control_id)
-        $faltantes = $faltantesPct = $coberturaPct = null;
+        // $faltantes = $faltantesPct = $coberturaPct = null;
+        $faltantes = $faltantesPct = $coberturaPct = 0;
         if (!is_null($hatoObjetivo) && $hatoObjetivo > 0) {
             $faltantes = max($hatoObjetivo - $totalAnimals, 0);
             $coberturaPct = $this->pct($totalAnimals, $hatoObjetivo);
@@ -78,14 +80,14 @@ class ConfirmatoryUltrasoundReportStrategy extends BaseReportService implements 
         $pregByHeat = $this->rateByHeatQuality($rows);
 
         $details = $rows->map(fn($r) => [
-            'confirmatory_ultrasound_id' => (int)$r->id,
-            'control_bovine_id' => (int)$r->control_bovine_id,
-            'bovine_id' => (int)$r->bovine_id,
+            'confirmatory_ultrasound_id' => (int) $r->id,
+            'control_bovine_id' => (int) $r->control_bovine_id,
+            'bovine_id' => (int) $r->bovine_id,
             'serie' => $r->serie,
             'rgd' => $r->rgd,
-            'property_id' => $r->property_id ? (int)$r->property_id : null,
+            'property_id' => $r->property_id ? (int) $r->property_id : null,
             'property_name' => $r->property_name,
-            'control_id' => $r->control_id ? (int)$r->control_id : null,
+            'control_id' => $r->control_id ? (int) $r->control_id : null,
 
             'date' => $r->date,
             'status' => $r->status, // pregnant/empty/discart
@@ -94,7 +96,7 @@ class ConfirmatoryUltrasoundReportStrategy extends BaseReportService implements 
 
             // cruzado con IA
             'insemination_date' => $r->insemination_date,
-            'bull_id' => $r->bull_id ? (int)$r->bull_id : null,
+            'bull_id' => $r->bull_id ? (int) $r->bull_id : null,
             'bull_name' => $r->bull_name,
             'heat_quality_raw' => $r->heat_quality,
             'heat_quality' => $this->heatLabel($r->heat_quality),
@@ -108,10 +110,10 @@ class ConfirmatoryUltrasoundReportStrategy extends BaseReportService implements 
                 'total_ecografias' => $totalAnimals,
                 'total_records' => $totalRecords,
 
-                'pregnant'  => ['count' => $pregnant, 'pct' => $this->pct($pregnant, $totalAnimals)],
-                'empty'     => ['count' => $empty,    'pct' => $this->pct($empty,    $totalAnimals)],
-                'discart'   => ['count' => $discart,  'pct' => $this->pct($discart,  $totalAnimals)],
-                'refugos'   => ['count' => $refugos,  'pct' => $this->pct($refugos,  $totalAnimals)],
+                'pregnant' => ['count' => $pregnant, 'pct' => $this->pct($pregnant, $totalAnimals)],
+                'empty' => ['count' => $empty, 'pct' => $this->pct($empty, $totalAnimals)],
+                'discart' => ['count' => $discart, 'pct' => $this->pct($discart, $totalAnimals)],
+                'refugos' => ['count' => $refugos, 'pct' => $this->pct($refugos, $totalAnimals)],
 
                 'pregnancy_pct' => $pregnancyPct,
 
@@ -145,7 +147,8 @@ class ConfirmatoryUltrasoundReportStrategy extends BaseReportService implements 
 
     private function heatLabel(?string $raw): ?string
     {
-        if (!$raw) return null;
+        if (!$raw)
+            return null;
         return match ($raw) {
             'well' => 'bueno',
             'regular' => 'regular',
@@ -165,9 +168,10 @@ class ConfirmatoryUltrasoundReportStrategy extends BaseReportService implements 
         $pregByGroup = [];
 
         foreach ($rows as $r) {
-            $animalId = (int)$r->control_bovine_id;
-            $g = trim((string)($r->{$groupField} ?? ''));
-            if ($g === '') $g = 'SIN_DATO';
+            $animalId = (int) $r->control_bovine_id;
+            $g = trim((string) ($r->{$groupField} ?? ''));
+            if ($g === '')
+                $g = 'SIN_DATO';
 
             $totalByGroup[$g][$animalId] = true;
             if ($r->status === 'pregnant') {
@@ -198,7 +202,7 @@ class ConfirmatoryUltrasoundReportStrategy extends BaseReportService implements 
         $pregBy = [];
 
         foreach ($rows as $r) {
-            $animalId = (int)$r->control_bovine_id;
+            $animalId = (int) $r->control_bovine_id;
             $label = $this->heatLabel($r->heat_quality);
             $label = $label ? trim($label) : 'SIN_DATO';
 
