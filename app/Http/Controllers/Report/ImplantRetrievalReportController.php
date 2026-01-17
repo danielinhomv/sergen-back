@@ -5,14 +5,14 @@ namespace App\Http\Controllers\Report;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Report\ReportFilterRequest;
 use App\Services\Report\ReportRunner;
-use App\Services\Report\Strategies\InseminationReportStrategy;
+use App\Services\Report\Strategies\ImplantRetrievalReportStrategy;
 use Barryvdh\DomPDF\Facade\Pdf;
 
-class InseminationReportController extends Controller
+class ImplantRetrievalReportController extends Controller
 {
     public function __construct(
         private readonly ReportRunner $runner,
-        private readonly InseminationReportStrategy $strategy
+        private readonly ImplantRetrievalReportStrategy $strategy
     ) {}
 
     public function index(ReportFilterRequest $request)
@@ -21,7 +21,7 @@ class InseminationReportController extends Controller
         return response()->json($result['payload'], $result['status']);
     }
 
-        public function export(ReportFilterRequest $request)
+    public function export(ReportFilterRequest $request)
     {
         // Ejecuta la lógica existente para obtener los datos
         $result = $this->runner->run($this->strategy, $request->filters());
@@ -35,7 +35,7 @@ class InseminationReportController extends Controller
         $generatedAt = $result['payload']['meta']['generated_at'] ?? now()->toIso8601String();
 
         // Genera el PDF en landscape completo
-        $pdf = Pdf::loadView('reports.insemination', compact('data', 'generatedAt'));
+        $pdf = Pdf::loadView('reports.implant-retrieval', compact('data', 'generatedAt'));
         $pdf->setPaper('A4', 'landscape'); // Todo en horizontal
 
         $pdf->setOptions([
@@ -47,7 +47,7 @@ class InseminationReportController extends Controller
         ]);
 
         // Descarga el PDF
-        $filename = 'informe-insemination-' . now()->format('Y-m-d') . '.pdf';
+        $filename = 'informe-implant-retrieval-' . now()->format('Y-m-d') . '.pdf';
         return $pdf->download($filename);
     }
 }
